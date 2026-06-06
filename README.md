@@ -41,12 +41,19 @@ If a user does not have an API key, the search page links to the portfolio Conta
 
 ## Cloudflare Pages
 
-Recommended project settings:
+The production site is deployed to Cloudflare Pages by GitHub Actions with Wrangler Direct Upload, following the same deployment model as the portfolio repository.
 
+- Cloudflare Pages project: `sdb`
+- Production branch: `master`
 - Build command: `npm run build`
 - Build output directory: `dist`
-- Framework preset: Vite / React, or None / static
 - Custom domain: `sdb.takumi-tokunaga.com`
+- API origin used by the frontend build: `https://api.sdb.takumi-tokunaga.com`
+
+The GitHub Actions workflow requires these repository secrets:
+
+- `CLOUDFLARE_ACCOUNT_ID`
+- `CLOUDFLARE_API_TOKEN`
 
 The build bundles Markdown from `content/ja/` into the React documentation routes. Cloudflare Pages should publish only the `dist` directory, not the repository root.
 

@@ -13,7 +13,7 @@ permissions:
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
   PROJECT_NAME: sdb
-  VITE_EDUANIMA_DB_API_BASE_URL: https://api.sdb.takumi-tokunaga.com
+  VITE_EDUANIMA_DB_API_BASE_URL: https://sdb.api.takumi-tokunaga.com
 
 concurrency:
   group: cloudflare-pages-${{ github.head_ref || github.ref_name }}

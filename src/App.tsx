@@ -96,7 +96,7 @@ const MAX_ITEMS = 10;
 const MIN_QUERY_LEN = 1;
 const API_KEY_STORAGE_KEY = "sdb_api_key";
 const API_KEY_REQUEST_URL = "https://takumi-tokunaga.com/contact/";
-const PRODUCTION_API_BASE_URL = "https://api.sdb.takumi-tokunaga.com";
+const PRODUCTION_API_BASE_URL = "https://sdb.api.takumi-tokunaga.com";
 const LOCALE_STORAGE_KEY = "sdb_locale";
 
 const INSTITUTION_TYPE_LABELS: Record<string, string> = {

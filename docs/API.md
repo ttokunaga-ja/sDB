@@ -11,7 +11,7 @@ To use the API, you need an issued API key and the production API base URL. If y
 Use the API base URL issued with your API key. The examples below use a placeholder:
 
 ```text
-https://api.sdb.takumi-tokunaga.com
+https://sdb.api.takumi-tokunaga.com
 ```
 
 ## Authentication
@@ -72,7 +72,7 @@ Query parameters:
 Request:
 
 ```bash
-curl "https://api.sdb.takumi-tokunaga.com/v1/institutions?q=ritsumeikan&type=university&prefectureCode=JP-26&limit=10" \
+curl "https://sdb.api.takumi-tokunaga.com/v1/institutions?q=ritsumeikan&type=university&prefectureCode=JP-26&limit=10" \
   -H "X-API-Key: <issued-key>" \
   -H "Accept: application/json"
 ```
@@ -101,7 +101,7 @@ Response:
 Get one institution by public ID.
 
 ```bash
-curl "https://api.sdb.takumi-tokunaga.com/v1/institutions/example1" \
+curl "https://sdb.api.takumi-tokunaga.com/v1/institutions/example1" \
   -H "X-API-Key: <issued-key>" \
   -H "Accept: application/json"
 ```
@@ -111,7 +111,7 @@ curl "https://api.sdb.takumi-tokunaga.com/v1/institutions/example1" \
 List faculties or graduate schools for one institution.
 
 ```bash
-curl "https://api.sdb.takumi-tokunaga.com/v1/institutions/example1/faculties?limit=20" \
+curl "https://sdb.api.takumi-tokunaga.com/v1/institutions/example1/faculties?limit=20" \
   -H "X-API-Key: <issued-key>" \
   -H "Accept: application/json"
 ```
@@ -140,7 +140,7 @@ Response:
 List departments for one faculty.
 
 ```bash
-curl "https://api.sdb.takumi-tokunaga.com/v1/faculties/faculty1/departments?limit=20" \
+curl "https://sdb.api.takumi-tokunaga.com/v1/faculties/faculty1/departments?limit=20" \
   -H "X-API-Key: <issued-key>" \
   -H "Accept: application/json"
 ```
@@ -175,7 +175,7 @@ Query parameters:
 - `limit`: number of items to return
 
 ```bash
-curl "https://api.sdb.takumi-tokunaga.com/v1/suggest?q=tokyo&limit=10" \
+curl "https://sdb.api.takumi-tokunaga.com/v1/suggest?q=tokyo&limit=10" \
   -H "X-API-Key: <issued-key>" \
   -H "Accept: application/json"
 ```
@@ -189,7 +189,7 @@ Record that a user selected an institution, faculty, or department. This optiona
 Request:
 
 ```bash
-curl "https://api.sdb.takumi-tokunaga.com/v1/selections" \
+curl "https://sdb.api.takumi-tokunaga.com/v1/selections" \
   -X POST \
   -H "X-API-Key: <issued-key>" \
   -H "Content-Type: application/json" \

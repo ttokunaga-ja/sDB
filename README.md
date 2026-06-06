@@ -28,10 +28,10 @@ make frontend-serve
 Open `http://localhost:5173`. Localhost uses `http://localhost:8080` as the API base URL by default. Set another backend API base URL with a Vite environment variable:
 
 ```bash
-VITE_EDUANIMA_DB_API_BASE_URL="https://api.sdb.takumi-tokunaga.com" make frontend-serve
+VITE_EDUANIMA_DB_API_BASE_URL="https://sdb.api.takumi-tokunaga.com" make frontend-serve
 ```
 
-For deployed pages, the default API base URL is `https://api.sdb.takumi-tokunaga.com`. As a runtime fallback, the app also reads `window.EDUANIMA_DB_API_BASE_URL` when it is defined before the React bundle runs.
+For deployed pages, the default API base URL is `https://sdb.api.takumi-tokunaga.com`. As a runtime fallback, the app also reads `window.EDUANIMA_DB_API_BASE_URL` when it is defined before the React bundle runs.
 
 If the API requires authentication, enter the issued API key in the search page. The key is sent as `X-API-Key` and is stored only in browser `sessionStorage`.
 
@@ -48,7 +48,7 @@ The production site is deployed to Cloudflare Pages by GitHub Actions with Wrang
 - Build command: `npm run build`
 - Build output directory: `dist`
 - Custom domain: `sdb.takumi-tokunaga.com`
-- API origin used by the frontend build: `https://api.sdb.takumi-tokunaga.com`
+- API origin used by the frontend build: `https://sdb.api.takumi-tokunaga.com`
 
 The GitHub Actions workflow requires these repository secrets:
 

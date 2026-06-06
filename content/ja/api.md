@@ -11,7 +11,7 @@ API を利用するには、発行済みの API キーと API Base URL が必要
 API Base URL は、API キーとあわせて案内される値を使用してください。以降の例では次の値を仮の Base URL とします。
 
 ```text
-https://api.sdb.takumi-tokunaga.com
+https://sdb.api.takumi-tokunaga.com
 ```
 
 ## 認証
@@ -72,7 +72,7 @@ Query parameters:
 Request:
 
 ```bash
-curl "https://api.sdb.takumi-tokunaga.com/v1/institutions?q=ritsumeikan&type=university&prefectureCode=JP-26&limit=10" \
+curl "https://sdb.api.takumi-tokunaga.com/v1/institutions?q=ritsumeikan&type=university&prefectureCode=JP-26&limit=10" \
   -H "X-API-Key: <issued-key>" \
   -H "Accept: application/json"
 ```
@@ -101,7 +101,7 @@ Response:
 教育機関の詳細を取得します。
 
 ```bash
-curl "https://api.sdb.takumi-tokunaga.com/v1/institutions/example1" \
+curl "https://sdb.api.takumi-tokunaga.com/v1/institutions/example1" \
   -H "X-API-Key: <issued-key>" \
   -H "Accept: application/json"
 ```
@@ -111,7 +111,7 @@ curl "https://api.sdb.takumi-tokunaga.com/v1/institutions/example1" \
 教育機関に紐づく学部・研究科を取得します。
 
 ```bash
-curl "https://api.sdb.takumi-tokunaga.com/v1/institutions/example1/faculties?limit=20" \
+curl "https://sdb.api.takumi-tokunaga.com/v1/institutions/example1/faculties?limit=20" \
   -H "X-API-Key: <issued-key>" \
   -H "Accept: application/json"
 ```
@@ -140,7 +140,7 @@ Response:
 学部・研究科に紐づく学科を取得します。
 
 ```bash
-curl "https://api.sdb.takumi-tokunaga.com/v1/faculties/faculty1/departments?limit=20" \
+curl "https://sdb.api.takumi-tokunaga.com/v1/faculties/faculty1/departments?limit=20" \
   -H "X-API-Key: <issued-key>" \
   -H "Accept: application/json"
 ```
@@ -175,7 +175,7 @@ Query parameters:
 - `limit`: 取得件数
 
 ```bash
-curl "https://api.sdb.takumi-tokunaga.com/v1/suggest?q=tokyo&limit=10" \
+curl "https://sdb.api.takumi-tokunaga.com/v1/suggest?q=tokyo&limit=10" \
   -H "X-API-Key: <issued-key>" \
   -H "Accept: application/json"
 ```
@@ -189,7 +189,7 @@ curl "https://api.sdb.takumi-tokunaga.com/v1/suggest?q=tokyo&limit=10" \
 Request:
 
 ```bash
-curl "https://api.sdb.takumi-tokunaga.com/v1/selections" \
+curl "https://sdb.api.takumi-tokunaga.com/v1/selections" \
   -X POST \
   -H "X-API-Key: <issued-key>" \
   -H "Content-Type: application/json" \

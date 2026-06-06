@@ -11,7 +11,7 @@ To use the API, you need an issued API key and the production API base URL. If y
 Use the API base URL issued with your API key. The examples below use a placeholder:
 
 ```text
-https://api.sdb.takumi-tokunaga.com
+https://sdb.api.takumi-tokunaga.com
 ```
 
 ## Authentication
@@ -62,7 +62,7 @@ Status code guide:
 Search institutions.
 
 ```bash
-curl "https://api.sdb.takumi-tokunaga.com/v1/institutions?q=ritsumeikan&type=university&prefectureCode=JP-26&limit=10" \
+curl "https://sdb.api.takumi-tokunaga.com/v1/institutions?q=ritsumeikan&type=university&prefectureCode=JP-26&limit=10" \
   -H "X-API-Key: <issued-key>" \
   -H "Accept: application/json"
 ```

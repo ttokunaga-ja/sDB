@@ -1,0 +1,23 @@
+# Runtime/local files
+.DS_Store
+.venv/
+node_modules/
+__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# sDB is public source only. Do not commit downloaded or generated data.
+data/
+*.csv
+*.tsv
+*.xlsx
+*.xls
+*.xlsm
+*.pdf
+
+# Local frontend/editor noise
+dist/
+frontend/
+*.log
+*.tmp

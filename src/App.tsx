@@ -19,7 +19,6 @@ import {
   Divider,
   Drawer,
   FormControl,
-  FormHelperText,
   GlobalStyles,
   IconButton,
   Link,
@@ -274,28 +273,23 @@ const UI_TEXT = {
     apiKeyMissing: "APIキーが未入力です。",
     apiKeyContact: "ポートフォリオのContactページ",
     apiKeySuffix: "から取得導線へ進んでください。",
-    apiKeyReady: "APIキー入力済みです。",
     apiKeyInvalid: "APIキーの形式が正しくありません。tkp_ から始まる 68 文字のキーを入力してください。",
     allInstitutionTypes: "すべての学校種別",
     institutionTypeAria: "学校種別",
-    institutionTypeHelper: "学校種別で候補を絞り込みます。",
     prefectureLabel: "都道府県（任意）",
     prefecturePlaceholder: "例: とうきょう / 大阪 / osaka",
     schoolLabel: "学校名",
     schoolPlaceholder: "りつめいかん / ritsumeikan / 立命館",
     schoolNoOptions: "学校名を入力してください",
     schoolNoMatch: "該当する学校がありません",
-    schoolHelper: "漢字・ひらがな・カタカナ・ローマ字・英語・略称で検索できます。",
     facultyAria: "学部・研究科",
     facultyLoading: "読み込み中...",
     facultyChoose: "学部・研究科を選択",
     facultyBeforeSchool: "先に学校を選択してください",
-    facultyHelper: "学校を選ぶと候補を取得します。",
     departmentAria: "学科",
     departmentLoading: "読み込み中...",
     departmentChoose: "学科を選択",
     departmentBeforeFaculty: "先に学部・研究科を選択してください",
-    departmentHelper: "学部・研究科を選ぶと候補を取得します。",
     summaryTitle: "選択中",
     summarySchool: "学校",
     summaryFaculty: "学部",
@@ -326,28 +320,23 @@ const UI_TEXT = {
     apiKeyMissing: "API key is not entered.",
     apiKeyContact: "Portfolio Contact page",
     apiKeySuffix: "to continue to the acquisition flow.",
-    apiKeyReady: "API key entered.",
     apiKeyInvalid: "Enter a 68-character API key beginning with tkp_.",
     allInstitutionTypes: "All institution types",
     institutionTypeAria: "Institution type",
-    institutionTypeHelper: "Filter candidates by institution type.",
     prefectureLabel: "Prefecture (optional)",
     prefecturePlaceholder: "Example: tokyo / osaka",
     schoolLabel: "Institution name",
     schoolPlaceholder: "ritsumeikan / tokyo / waseda",
     schoolNoOptions: "Enter an institution name",
     schoolNoMatch: "No matching institutions",
-    schoolHelper: "Search by Japanese, hiragana, katakana, roman letters, English, or abbreviations.",
     facultyAria: "Faculty or graduate school",
     facultyLoading: "Loading...",
     facultyChoose: "Select a faculty or graduate school",
     facultyBeforeSchool: "Select an institution first",
-    facultyHelper: "Candidates load after selecting an institution.",
     departmentAria: "Department",
     departmentLoading: "Loading...",
     departmentChoose: "Select a department",
     departmentBeforeFaculty: "Select a faculty or graduate school first",
-    departmentHelper: "Candidates load after selecting a faculty or graduate school.",
     summaryTitle: "Selected",
     summarySchool: "Institution",
     summaryFaculty: "Faculty",
@@ -394,6 +383,14 @@ function trackLabel(value?: string, locale: Locale = "ja") {
 
 function prefLabel(value?: string) {
   return value ? PREFECTURES.find((pref) => pref.code === value)?.name || value : "";
+}
+
+function selectPlaceholder(label: string) {
+  return (
+    <Typography component="span" color="text.secondary">
+      {label}
+    </Typography>
+  );
 }
 
 function createHeaders(apiKey: string, extra?: Record<string, string>) {
@@ -731,6 +728,35 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
   const normalizedApiKey = React.useMemo(() => normalizeApiKey(apiKey), [apiKey]);
   const hasApiKey = normalizedApiKey.length > 0;
   const apiKeyValid = isValidApiKey(normalizedApiKey);
+  const facultyPlaceholder = school ? (facultyLoading ? text.facultyLoading : text.facultyChoose) : text.facultyBeforeSchool;
+  const departmentPlaceholder = faculty
+    ? departmentLoading
+      ? text.departmentLoading
+      : text.departmentChoose
+    : text.departmentBeforeFaculty;
+  const apiKeyLabel = apiKeyValid ? (
+    <Box component="span" sx={{ display: "inline-flex", alignItems: "center", gap: 0.6 }}>
+      <Box component="span">{text.apiKeyLabel}</Box>
+      <Box
+        component="span"
+        aria-hidden="true"
+        sx={{
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          width: 16,
+          height: 16,
+          borderRadius: 0.75,
+          bgcolor: "success.main",
+          color: "success.contrastText"
+        }}
+      >
+        <CheckRoundedIcon sx={{ fontSize: 14 }} />
+      </Box>
+    </Box>
+  ) : (
+    text.apiKeyLabel
+  );
 
   React.useEffect(() => {
     const query = schoolQuery.trim();
@@ -887,7 +913,7 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
         <Paper variant="outlined" sx={{ p: { xs: 2, sm: 3 }, maxWidth: 760, width: "100%" }}>
           <Stack spacing={2.5}>
             <TextField
-              label={text.apiKeyLabel}
+              label={apiKeyLabel}
               value={apiKey}
               type="text"
               name="sdb-api-access-key"
@@ -915,9 +941,7 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
               </Alert>
             ) : !apiKeyValid ? (
               <Alert severity="error">{text.apiKeyInvalid}</Alert>
-            ) : (
-              <Alert severity="success">{text.apiKeyReady}</Alert>
-            )}
+            ) : null}
 
             <Divider />
 
@@ -930,15 +954,21 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
                   handleFilterChange();
                 }}
                 inputProps={{ "aria-label": text.institutionTypeAria }}
+                sx={{ color: institutionType ? "text.primary" : "text.secondary" }}
+                renderValue={(selected) => {
+                  const value = String(selected);
+                  return value ? typeLabel(value, locale) : selectPlaceholder(text.allInstitutionTypes);
+                }}
               >
-                <MenuItem value="">{text.allInstitutionTypes}</MenuItem>
+                <MenuItem value="">
+                  <Typography color="text.secondary">{text.allInstitutionTypes}</Typography>
+                </MenuItem>
                 {Object.keys(INSTITUTION_TYPE_LABELS).map((value) => (
                   <MenuItem key={value} value={value}>
                     {typeLabel(value, locale)}
                   </MenuItem>
                 ))}
               </Select>
-              <FormHelperText>{text.institutionTypeHelper}</FormHelperText>
             </FormControl>
 
             <Autocomplete
@@ -996,7 +1026,7 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
                   label={text.schoolLabel}
                   placeholder={text.schoolPlaceholder}
                   error={!!schoolError}
-                  helperText={schoolError || text.schoolHelper}
+                  helperText={schoolError || undefined}
                 />
               )}
             />
@@ -1007,9 +1037,15 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
                 value={faculty?.publicId || ""}
                 onChange={handleFacultyChange}
                 inputProps={{ "aria-label": text.facultyAria }}
+                sx={{ color: faculty ? "text.primary" : "text.secondary" }}
+                renderValue={(selected) => {
+                  const value = String(selected);
+                  const item = faculties.find((candidate) => candidate.publicId === value);
+                  return item ? item.displayName : selectPlaceholder(facultyPlaceholder);
+                }}
               >
                 <MenuItem value="">
-                  {school ? (facultyLoading ? text.facultyLoading : text.facultyChoose) : text.facultyBeforeSchool}
+                  <Typography color="text.secondary">{facultyPlaceholder}</Typography>
                 </MenuItem>
                 {faculties.map((item) => (
                   <MenuItem key={item.publicId} value={item.publicId}>
@@ -1024,7 +1060,6 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
                   </MenuItem>
                 ))}
               </Select>
-              <FormHelperText>{text.facultyHelper}</FormHelperText>
             </FormControl>
 
             <FormControl fullWidth disabled={!faculty || departmentLoading || departments.length === 0}>
@@ -1033,9 +1068,15 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
                 value={department?.publicId || ""}
                 onChange={handleDepartmentChange}
                 inputProps={{ "aria-label": text.departmentAria }}
+                sx={{ color: department ? "text.primary" : "text.secondary" }}
+                renderValue={(selected) => {
+                  const value = String(selected);
+                  const item = departments.find((candidate) => candidate.publicId === value);
+                  return item ? item.displayName : selectPlaceholder(departmentPlaceholder);
+                }}
               >
                 <MenuItem value="">
-                  {faculty ? (departmentLoading ? text.departmentLoading : text.departmentChoose) : text.departmentBeforeFaculty}
+                  <Typography color="text.secondary">{departmentPlaceholder}</Typography>
                 </MenuItem>
                 {departments.map((item) => {
                   const meta = [fieldLabel(item.academicField, locale), trackLabel(item.academicTrack, locale)].filter(Boolean).join(" / ");
@@ -1053,7 +1094,6 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
                   );
                 })}
               </Select>
-              <FormHelperText>{text.departmentHelper}</FormHelperText>
             </FormControl>
 
             {flowError ? <Alert severity="error">{flowError}</Alert> : null}

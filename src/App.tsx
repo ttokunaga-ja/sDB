@@ -780,7 +780,7 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
         const data = await apiGet<ListResponse<Institution>>(
           apiBase,
           normalizedApiKey,
-          "/v1/institutions",
+          "/v1/suggest",
           {
             q: query,
             type: institutionType,

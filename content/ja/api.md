@@ -170,15 +170,17 @@ Response:
 
 ### `GET /v1/suggest`
 
-教育機関名の軽量サジェストを取得します。
+教育機関名の軽量サジェストを取得します。autocomplete 向けの endpoint で、`GET /v1/institutions` の total-count query は実行しません。
 
 Query parameters:
 
 - `q`: 検索文字列
+- `type`: 学校種別フィルタ
+- `prefectureCode`: 都道府県フィルタ
 - `limit`: 取得件数
 
 ```bash
-curl "https://sdb.api.takumi-tokunaga.com/v1/suggest?q=tokyo&limit=10" \
+curl "https://sdb.api.takumi-tokunaga.com/v1/suggest?q=tokyo&type=university&prefectureCode=JP-13&limit=10" \
   -H "X-API-Key: $SDB_API_KEY" \
   -H "Accept: application/json"
 ```

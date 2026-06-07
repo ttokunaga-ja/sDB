@@ -170,15 +170,17 @@ Response:
 
 ### `GET /v1/suggest`
 
-Return lightweight institution suggestions.
+Return lightweight institution suggestions. This endpoint is intended for autocomplete and does not run the total-count query used by `GET /v1/institutions`.
 
 Query parameters:
 
 - `q`: search text
+- `type`: institution type filter
+- `prefectureCode`: prefecture filter
 - `limit`: number of items to return
 
 ```bash
-curl "https://sdb.api.takumi-tokunaga.com/v1/suggest?q=tokyo&limit=10" \
+curl "https://sdb.api.takumi-tokunaga.com/v1/suggest?q=tokyo&type=university&prefectureCode=JP-13&limit=10" \
   -H "X-API-Key: $SDB_API_KEY" \
   -H "Accept: application/json"
 ```

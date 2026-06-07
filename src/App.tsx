@@ -21,6 +21,7 @@ import {
   FormControl,
   GlobalStyles,
   IconButton,
+  InputLabel,
   Link,
   List,
   ListItemButton,
@@ -98,6 +99,8 @@ const API_KEY_PATTERN = /^tkp_[a-f0-9]{64}$/;
 const API_KEY_REQUEST_URL = "https://takumi-tokunaga.com/contact/";
 const PRODUCTION_API_BASE_URL = "https://sdb.api.takumi-tokunaga.com";
 const LOCALE_STORAGE_KEY = "sdb_locale";
+const PAGE_TITLE_ID = "page-title";
+const MAIN_CONTENT_ID = "main-content";
 
 const INSTITUTION_TYPE_LABELS: Record<string, string> = {
   university: "大学",
@@ -263,7 +266,10 @@ const UI_TEXT = {
     menu: "メニュー",
     openMenu: "メニューを開く",
     navigation: "ナビゲーション",
+    primaryNavigation: "主要ナビゲーション",
+    skipToContent: "本文へスキップ",
     language: "言語",
+    switchLanguage: "Switch to English",
     copyCode: "コードをコピー",
     copiedCode: "コピーしました",
     copyFailed: "コピーに失敗しました",
@@ -310,7 +316,10 @@ const UI_TEXT = {
     menu: "Menu",
     openMenu: "Open menu",
     navigation: "Menu",
+    primaryNavigation: "Primary navigation",
+    skipToContent: "Skip to content",
     language: "Language",
+    switchLanguage: "Switch language to Japanese",
     copyCode: "Copy code",
     copiedCode: "Copied",
     copyFailed: "Copy failed",
@@ -392,6 +401,18 @@ function selectPlaceholder(label: string) {
     </Typography>
   );
 }
+
+const visuallyHiddenSx = {
+  border: 0,
+  clip: "rect(0 0 0 0)",
+  height: 1,
+  margin: -1,
+  overflow: "hidden",
+  padding: 0,
+  position: "absolute",
+  whiteSpace: "nowrap",
+  width: 1
+} as const;
 
 function createHeaders(apiKey: string, extra?: Record<string, string>) {
   const headers: Record<string, string> = { ...(extra || {}) };
@@ -547,6 +568,8 @@ function Layout({
 }) {
   const [isDrawerOpen, setDrawerOpen] = React.useState(false);
   const appBarRef = React.useRef<HTMLElement | null>(null);
+  const mainRef = React.useRef<HTMLElement | null>(null);
+  const didMountRef = React.useRef(false);
   const [appBarHeight, setAppBarHeight] = React.useState(0);
   const text = UI_TEXT[locale];
 
@@ -561,6 +584,14 @@ function Layout({
     return () => observer.disconnect();
   }, []);
 
+  React.useEffect(() => {
+    if (!didMountRef.current) {
+      didMountRef.current = true;
+      return;
+    }
+    mainRef.current?.focus({ preventScroll: true });
+  }, [currentPage]);
+
   const handleNavigate = (event: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     event.preventDefault();
     setDrawerOpen(false);
@@ -569,6 +600,31 @@ function Layout({
 
   return (
     <Box sx={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+      <Box
+        component="a"
+        href={`#${MAIN_CONTENT_ID}`}
+        sx={{
+          position: "fixed",
+          top: 12,
+          left: 12,
+          zIndex: (theme) => theme.zIndex.tooltip + 1,
+          transform: "translateY(-160%)",
+          px: 1.5,
+          py: 1,
+          borderRadius: 1,
+          bgcolor: "background.paper",
+          color: "text.primary",
+          border: 2,
+          borderColor: "secondary.main",
+          fontWeight: 800,
+          textDecoration: "none",
+          "&:focus": {
+            transform: "translateY(0)"
+          }
+        }}
+      >
+        {text.skipToContent}
+      </Box>
       <AppBar
         ref={appBarRef}
         position="sticky"
@@ -617,7 +673,7 @@ function Layout({
               component="nav"
               direction="row"
               spacing={0.5}
-              aria-label="Primary navigation"
+              aria-label={text.primaryNavigation}
               sx={{ display: { xs: "none", md: "flex" }, alignItems: "center" }}
             >
               {NAV_ITEMS.map((item) => {
@@ -652,7 +708,7 @@ function Layout({
             <Tooltip title={text.language}>
               <IconButton
                 color="primary"
-                aria-label={text.language}
+                aria-label={text.switchLanguage}
                 onClick={() => setLocale(locale === "ja" ? "en" : "ja")}
               >
                 <LanguageRoundedIcon />
@@ -679,7 +735,7 @@ function Layout({
         }}
         sx={{ "& .MuiBackdrop-root": { top: appBarHeight } }}
       >
-        <Box sx={{ pt: 2 }} role="presentation">
+        <Box component="nav" aria-label={text.primaryNavigation} sx={{ pt: 2 }}>
           <Typography variant="overline" color="text.secondary" sx={{ px: 2 }}>
             {text.navigation}
           </Typography>
@@ -700,7 +756,21 @@ function Layout({
         </Box>
       </Drawer>
 
-      <Box component="main" sx={{ flexGrow: 1 }}>
+      <Box
+        id={MAIN_CONTENT_ID}
+        ref={mainRef}
+        component="main"
+        tabIndex={-1}
+        aria-labelledby={PAGE_TITLE_ID}
+        sx={{
+          flexGrow: 1,
+          outline: 0,
+          "&:focus-visible": {
+            outline: "3px solid var(--mui-palette-secondary-main)",
+            outlineOffset: -3
+          }
+        }}
+      >
         {children}
       </Box>
 
@@ -728,6 +798,7 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
   const normalizedApiKey = React.useMemo(() => normalizeApiKey(apiKey), [apiKey]);
   const hasApiKey = normalizedApiKey.length > 0;
   const apiKeyValid = isValidApiKey(normalizedApiKey);
+  const apiKeyDescriptionId = !hasApiKey ? "api-key-missing" : !apiKeyValid ? "api-key-error" : undefined;
   const facultyPlaceholder = school ? (facultyLoading ? text.facultyLoading : text.facultyChoose) : text.facultyBeforeSchool;
   const departmentPlaceholder = faculty
     ? departmentLoading
@@ -814,6 +885,36 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
     setFlowError("");
   }, []);
 
+  const loadDepartments = React.useCallback(
+    async (nextFaculty: Faculty, opts?: { auto?: boolean }) => {
+      setFaculty(nextFaculty);
+      setDepartment(null);
+      setFlowError("");
+      if (!opts?.auto) recordSelection(apiBase, normalizedApiKey, "faculty", nextFaculty.publicId);
+
+      setDepartmentLoading(true);
+      try {
+        const data = await apiGet<ListResponse<Department>>(
+          apiBase,
+          normalizedApiKey,
+          `/v1/faculties/${encodeURIComponent(nextFaculty.publicId)}/departments`,
+          { limit: MAX_ITEMS }
+        );
+        const nextDepartments = data.items || [];
+        setDepartments(nextDepartments);
+        if (nextDepartments.length === 1 && (data.total || nextDepartments.length) === 1) {
+          setDepartment(nextDepartments[0]);
+        }
+      } catch (error) {
+        setDepartments([]);
+        setFlowError(error instanceof Error ? error.message : "学科の取得に失敗しました");
+      } finally {
+        setDepartmentLoading(false);
+      }
+    },
+    [apiBase, normalizedApiKey]
+  );
+
   const loadFaculties = React.useCallback(
     async (nextSchool: Institution) => {
       setSchool(nextSchool);
@@ -843,37 +944,7 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
         setFacultyLoading(false);
       }
     },
-    [apiBase, normalizedApiKey]
-  );
-
-  const loadDepartments = React.useCallback(
-    async (nextFaculty: Faculty, opts?: { auto?: boolean }) => {
-      setFaculty(nextFaculty);
-      setDepartment(null);
-      setFlowError("");
-      if (!opts?.auto) recordSelection(apiBase, normalizedApiKey, "faculty", nextFaculty.publicId);
-
-      setDepartmentLoading(true);
-      try {
-        const data = await apiGet<ListResponse<Department>>(
-          apiBase,
-          normalizedApiKey,
-          `/v1/faculties/${encodeURIComponent(nextFaculty.publicId)}/departments`,
-          { limit: MAX_ITEMS }
-        );
-        const nextDepartments = data.items || [];
-        setDepartments(nextDepartments);
-        if (nextDepartments.length === 1 && (data.total || nextDepartments.length) === 1) {
-          setDepartment(nextDepartments[0]);
-        }
-      } catch (error) {
-        setDepartments([]);
-        setFlowError(error instanceof Error ? error.message : "学科の取得に失敗しました");
-      } finally {
-        setDepartmentLoading(false);
-      }
-    },
-    [apiBase, normalizedApiKey]
+    [apiBase, loadDepartments, normalizedApiKey]
   );
 
   const handleSchoolChange = (_event: React.SyntheticEvent, nextSchool: Institution | null) => {
@@ -907,12 +978,15 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
     <Container maxWidth="lg" sx={{ py: { xs: 3, md: 5 } }}>
       <Stack spacing={3} alignItems="center">
         <Box sx={{ textAlign: "center" }}>
-          <Typography variant="h1">{text.homeTitle}</Typography>
+          <Typography id={PAGE_TITLE_ID} variant="h1">
+            {text.homeTitle}
+          </Typography>
         </Box>
 
         <Paper variant="outlined" sx={{ p: { xs: 2, sm: 3 }, maxWidth: 760, width: "100%" }}>
           <Stack spacing={2.5}>
             <TextField
+              id="sdb-api-key"
               label={apiKeyLabel}
               value={apiKey}
               type="text"
@@ -922,6 +996,8 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
                 autoComplete: "off",
                 autoCapitalize: "none",
                 spellCheck: false,
+                "aria-describedby": apiKeyDescriptionId,
+                "aria-invalid": hasApiKey && !apiKeyValid ? "true" : undefined,
                 "data-1p-ignore": "true",
                 "data-lpignore": "true"
               }}
@@ -937,7 +1013,7 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
             />
 
             {!hasApiKey ? (
-              <Alert severity="warning" icon={<KeyRoundedIcon />} sx={{ alignItems: "center" }}>
+              <Alert id="api-key-missing" severity="warning" icon={<KeyRoundedIcon />} sx={{ alignItems: "center" }}>
                 {text.apiKeyMissing}{" "}
                 <Link href={API_KEY_REQUEST_URL} target="_blank" rel="noreferrer" fontWeight={700}>
                   {text.apiKeyContact}
@@ -945,20 +1021,27 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
                 {locale === "ja" ? text.apiKeySuffix : ` ${text.apiKeySuffix}`}
               </Alert>
             ) : !apiKeyValid ? (
-              <Alert severity="error">{text.apiKeyInvalid}</Alert>
+              <Alert id="api-key-error" severity="error">
+                {text.apiKeyInvalid}
+              </Alert>
             ) : null}
 
             <Divider />
 
             <FormControl fullWidth>
+              <InputLabel id="institution-type-label" shrink>
+                {text.institutionTypeAria}
+              </InputLabel>
               <Select
+                id="institution-type"
+                labelId="institution-type-label"
+                label={text.institutionTypeAria}
                 displayEmpty
                 value={institutionType}
                 onChange={(event) => {
                   setInstitutionType(event.target.value);
                   handleFilterChange();
                 }}
-                inputProps={{ "aria-label": text.institutionTypeAria }}
                 sx={{ color: institutionType ? "text.primary" : "text.secondary" }}
                 renderValue={(selected) => {
                   const value = String(selected);
@@ -1037,11 +1120,16 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
             />
 
             <FormControl fullWidth disabled={!school || facultyLoading || faculties.length === 0}>
+              <InputLabel id="faculty-label" shrink>
+                {text.facultyAria}
+              </InputLabel>
               <Select
+                id="faculty"
+                labelId="faculty-label"
+                label={text.facultyAria}
                 displayEmpty
                 value={faculty?.publicId || ""}
                 onChange={handleFacultyChange}
-                inputProps={{ "aria-label": text.facultyAria }}
                 sx={{ color: faculty ? "text.primary" : "text.secondary" }}
                 renderValue={(selected) => {
                   const value = String(selected);
@@ -1068,11 +1156,16 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
             </FormControl>
 
             <FormControl fullWidth disabled={!faculty || departmentLoading || departments.length === 0}>
+              <InputLabel id="department-label" shrink>
+                {text.departmentAria}
+              </InputLabel>
               <Select
+                id="department"
+                labelId="department-label"
+                label={text.departmentAria}
                 displayEmpty
                 value={department?.publicId || ""}
                 onChange={handleDepartmentChange}
-                inputProps={{ "aria-label": text.departmentAria }}
                 sx={{ color: department ? "text.primary" : "text.secondary" }}
                 renderValue={(selected) => {
                   const value = String(selected);
@@ -1192,7 +1285,7 @@ function DocPage({ page, locale }: { page: DocPageKey; locale: Locale }) {
   const [codeBlocks, setCodeBlocks] = React.useState<CodeBlockTarget[]>([]);
   const [codeBlockFeedback, setCodeBlockFeedback] = React.useState<{ id: string; status: "copied" | "failed" } | null>(null);
 
-  React.useLayoutEffect(() => {
+  React.useEffect(() => {
     const container = contentRef.current;
     if (!container) {
       setCodeBlocks([]);
@@ -1223,7 +1316,9 @@ function DocPage({ page, locale }: { page: DocPageKey; locale: Locale }) {
     <Container maxWidth="md" sx={{ py: { xs: 3, md: 5 } }}>
       <Stack spacing={3}>
         <Box>
-          <Typography variant="h1">{doc.title}</Typography>
+          <Typography id={PAGE_TITLE_ID} variant="h1">
+            {doc.title}
+          </Typography>
           <Typography variant="body1" color="text.secondary" sx={{ mt: 1 }}>
             {doc.lead}
           </Typography>
@@ -1281,7 +1376,7 @@ function DocPage({ page, locale }: { page: DocPageKey; locale: Locale }) {
             "& blockquote p": { m: 0 }
           }}
         >
-          <Box ref={contentRef} dangerouslySetInnerHTML={{ __html: html }} />
+          <Box component="article" aria-labelledby={PAGE_TITLE_ID} ref={contentRef} dangerouslySetInnerHTML={{ __html: html }} />
           {codeBlocks.map((block) => (
             <CodeCopyButton
               key={block.id}
@@ -1314,34 +1409,39 @@ function CodeCopyButton({
   const label = isCopied ? text.copiedCode : isFailed ? text.copyFailed : text.copyCode;
 
   return createPortal(
-    <Tooltip title={label}>
-      <IconButton
-        className="sdb-code-copy-button"
-        size="small"
-        aria-label={label}
-        onClick={(event) => {
-          event.preventDefault();
-          event.stopPropagation();
-          onCopy(block);
-        }}
-        sx={{
-          position: "absolute",
-          top: 8,
-          right: 8,
-          zIndex: 1,
-          color: isFailed ? "secondary.main" : "common.white",
-          border: "1px solid",
-          borderColor: isFailed ? "secondary.main" : "rgba(255, 255, 255, 0.24)",
-          bgcolor: isCopied ? "rgba(100, 199, 189, 0.22)" : "rgba(255, 255, 255, 0.12)",
-          backdropFilter: "blur(8px)",
-          "&:hover": {
-            bgcolor: isCopied ? "rgba(100, 199, 189, 0.32)" : "rgba(255, 255, 255, 0.22)"
-          }
-        }}
-      >
-        {isCopied ? <CheckRoundedIcon fontSize="small" /> : <ContentCopyRoundedIcon fontSize="small" />}
-      </IconButton>
-    </Tooltip>,
+    <>
+      <Tooltip title={label}>
+        <IconButton
+          className="sdb-code-copy-button"
+          size="small"
+          aria-label={label}
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            onCopy(block);
+          }}
+          sx={{
+            position: "absolute",
+            top: 8,
+            right: 8,
+            zIndex: 1,
+            color: isFailed ? "secondary.main" : "common.white",
+            border: "1px solid",
+            borderColor: isFailed ? "secondary.main" : "rgba(255, 255, 255, 0.24)",
+            bgcolor: isCopied ? "rgba(100, 199, 189, 0.22)" : "rgba(255, 255, 255, 0.12)",
+            backdropFilter: "blur(8px)",
+            "&:hover": {
+              bgcolor: isCopied ? "rgba(100, 199, 189, 0.32)" : "rgba(255, 255, 255, 0.22)"
+            }
+          }}
+        >
+          {isCopied ? <CheckRoundedIcon fontSize="small" /> : <ContentCopyRoundedIcon fontSize="small" />}
+        </IconButton>
+      </Tooltip>
+      <Box component="span" sx={visuallyHiddenSx} aria-live="polite">
+        {feedbackStatus ? label : ""}
+      </Box>
+    </>,
     block.element
   );
 }
@@ -1352,7 +1452,9 @@ function NotFoundPage({ locale, navigate }: { locale: Locale; navigate: (href: s
     <Container maxWidth="md" sx={{ py: { xs: 4, md: 7 } }}>
       <Paper variant="outlined" sx={{ p: 3 }}>
         <Stack spacing={2} alignItems="flex-start">
-          <Typography variant="h1">{text.notFoundTitle}</Typography>
+          <Typography id={PAGE_TITLE_ID} variant="h1">
+            {text.notFoundTitle}
+          </Typography>
           <Typography color="text.secondary">{text.notFoundBody}</Typography>
           <Button component="a" href="/" startIcon={<SearchRoundedIcon />} onClick={(event) => {
             event.preventDefault();

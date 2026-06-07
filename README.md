@@ -51,7 +51,28 @@ The GitHub Actions workflow requires these repository secrets:
 
 The build bundles Markdown from `content/ja/` into the React documentation routes. Cloudflare Pages should publish only the `dist` directory, not the repository root.
 
+`npm run build` also prerenders the home, overview, API, notices, and legacy sources routes into static HTML so important headings, documentation text, and form labels are present before React starts.
+
 `public/_headers` and `public/_redirects` are copied into `dist/` by Vite. The redirect file allows direct access to `/overview/`, `/api/`, and `/notices/` on Cloudflare Pages. This repository does not include Cloudflare Pages Functions.
+
+## Accessibility And Rendering Checks
+
+Run the frontend quality gates:
+
+```bash
+npm run lint
+npm run typecheck
+npm run test
+npm run build
+npm run lighthouse:a11y
+```
+
+`npm run test` runs the Playwright + axe accessibility check. The current accessibility and rendering policies are documented in:
+
+- [Web accessibility review](docs/accessibility.md)
+- [Rendering strategy](docs/rendering-strategy.md)
+
+There is no Next.js / React Server Components boundary in this repository, so there are no `use client` files. The active rendering boundary is static prerendered HTML plus client-side React for interactive search behavior.
 
 ## Markdown Content
 
@@ -132,3 +153,5 @@ This project is not affiliated with, endorsed by, or operated by MEXT. The scrip
 - [API documentation](docs/API.md)
 - [Data pipeline documentation](docs/DATA_PIPELINE.md)
 - [Notices](docs/NOTICES.md)
+- [Web accessibility review](docs/accessibility.md)
+- [Rendering strategy](docs/rendering-strategy.md)

@@ -929,6 +929,11 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
               onChange={(event) => setApiKey(event.target.value.replace(/\s+/g, ""))}
               placeholder={text.apiKeyPlaceholder}
               fullWidth
+              sx={{
+                "& input": {
+                  "-webkit-text-security": hasApiKey ? "disc" : "none"
+                }
+              }}
             />
 
             {!hasApiKey ? (

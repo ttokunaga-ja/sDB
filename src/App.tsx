@@ -38,6 +38,7 @@ import {
   Typography,
   type SelectChangeEvent,
 } from "@mui/material";
+import DOMPurify from "dompurify";
 import { marked } from "marked";
 import React from "react";
 import { createPortal } from "react-dom";
@@ -1503,7 +1504,10 @@ async function copyTextToClipboard(text: string) {
 function DocPage({ page, locale }: { page: DocPageKey; locale: Locale }) {
   const doc = DOC_PAGES[locale][page];
   const html = React.useMemo(
-    () => marked.parse(doc.markdown, { async: false, gfm: true }) as string,
+    () =>
+      DOMPurify.sanitize(
+        marked.parse(doc.markdown, { async: false, gfm: true }) as string,
+      ),
     [doc.markdown],
   );
   const contentRef = React.useRef<HTMLDivElement | null>(null);

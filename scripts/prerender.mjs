@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import DOMPurify from "isomorphic-dompurify";
 import { marked } from "marked";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -101,7 +102,9 @@ function home() {
 }
 
 function docPage(doc) {
-  const body = marked.parse(doc.markdown, { async: false, gfm: true });
+  const body = DOMPurify.sanitize(
+    marked.parse(doc.markdown, { async: false, gfm: true }),
+  );
   return shell(`<main id="main-content" aria-labelledby="page-title">
 <h1 id="page-title">${escapeHtml(doc.title.replace(" | sDB", ""))}</h1>
 <p>${escapeHtml(doc.lead)}</p>

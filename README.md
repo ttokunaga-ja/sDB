@@ -25,15 +25,9 @@ npm install
 make frontend-serve
 ```
 
-Open `http://localhost:5173`. Localhost uses `http://localhost:8080` as the API base URL by default. Set another backend API base URL with a Vite environment variable:
+Open `http://localhost:5173`. The search app always calls `https://sdb.api.takumi-tokunaga.com`.
 
-```bash
-VITE_EDUANIMA_DB_API_BASE_URL="https://sdb.api.takumi-tokunaga.com" make frontend-serve
-```
-
-For deployed pages, the default API base URL is `https://sdb.api.takumi-tokunaga.com`. As a runtime fallback, the app also reads `window.EDUANIMA_DB_API_BASE_URL` when it is defined before the React bundle runs.
-
-If the API requires authentication, enter the issued API key in the search page. The key is sent as `X-API-Key` and is stored only in browser `sessionStorage`.
+If the API requires authentication, enter the issued API key in the search page. The key is sent as `X-API-Key` and is kept only in the current page state. It is not written to browser storage, and route changes clear the form state.
 
 If a user does not have an API key, the search page links to the portfolio Contact page:
 

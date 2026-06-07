@@ -4,7 +4,3 @@ declare module "*.md?raw" {
   const content: string;
   export default content;
 }
-
-interface Window {
-  EDUANIMA_DB_API_BASE_URL?: string;
-}

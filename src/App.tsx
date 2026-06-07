@@ -94,7 +94,8 @@ type PrefectureOption = {
 
 const MAX_ITEMS = 10;
 const MIN_QUERY_LEN = 1;
-const API_KEY_STORAGE_KEY = "sdb_api_key";
+const LEGACY_API_KEY_STORAGE_KEY = "sdb_api_key";
+const API_KEY_PATTERN = /^tkp_[a-f0-9]{64}$/;
 const API_KEY_REQUEST_URL = "https://takumi-tokunaga.com/contact/";
 const PRODUCTION_API_BASE_URL = "https://sdb.api.takumi-tokunaga.com";
 const LOCALE_STORAGE_KEY = "sdb_locale";
@@ -274,6 +275,7 @@ const UI_TEXT = {
     apiKeyContact: "ポートフォリオのContactページ",
     apiKeySuffix: "から取得導線へ進んでください。",
     apiKeyReady: "APIキー入力済みです。",
+    apiKeyInvalid: "APIキーの形式が正しくありません。tkp_ から始まる 68 文字のキーを入力してください。",
     allInstitutionTypes: "すべての学校種別",
     institutionTypeAria: "学校種別",
     institutionTypeHelper: "学校種別で候補を絞り込みます。",
@@ -325,6 +327,7 @@ const UI_TEXT = {
     apiKeyContact: "Portfolio Contact page",
     apiKeySuffix: "to continue to the acquisition flow.",
     apiKeyReady: "API key entered.",
+    apiKeyInvalid: "Enter a 68-character API key beginning with tkp_.",
     allInstitutionTypes: "All institution types",
     institutionTypeAria: "Institution type",
     institutionTypeHelper: "Filter candidates by institution type.",
@@ -371,17 +374,7 @@ function pageFromPath(pathname: string): PageKey {
 }
 
 function resolveApiBase() {
-	const windowValue = window.EDUANIMA_DB_API_BASE_URL;
-	if (typeof windowValue === "string" && windowValue.trim()) return windowValue.trim().replace(/\/+$/, "");
-
-	const envValue = import.meta.env.VITE_EDUANIMA_DB_API_BASE_URL;
-	if (typeof envValue === "string" && envValue.trim()) return envValue.trim().replace(/\/+$/, "");
-
-	if (window.location.hostname !== "localhost" && window.location.hostname !== "127.0.0.1") {
-		return PRODUCTION_API_BASE_URL;
-	}
-
-	return "http://localhost:8080";
+  return PRODUCTION_API_BASE_URL;
 }
 
 function typeLabel(value?: string, locale: Locale = "ja") {
@@ -405,8 +398,17 @@ function prefLabel(value?: string) {
 
 function createHeaders(apiKey: string, extra?: Record<string, string>) {
   const headers: Record<string, string> = { ...(extra || {}) };
-  if (apiKey.trim()) headers["X-API-Key"] = apiKey.trim();
+  const normalizedApiKey = normalizeApiKey(apiKey);
+  if (isValidApiKey(normalizedApiKey)) headers["X-API-Key"] = normalizedApiKey;
   return headers;
+}
+
+function normalizeApiKey(value: string) {
+  return value.trim();
+}
+
+function isValidApiKey(value: string) {
+  return API_KEY_PATTERN.test(value);
 }
 
 async function apiGet<T>(
@@ -416,6 +418,9 @@ async function apiGet<T>(
   params?: Record<string, string | number | undefined | null>,
   signal?: AbortSignal
 ): Promise<T> {
+  const normalizedApiKey = normalizeApiKey(apiKey);
+  if (!isValidApiKey(normalizedApiKey)) throw new Error("APIキーの形式が正しくありません");
+
   const url = new URL(`${apiBase}${path}`);
   for (const [key, value] of Object.entries(params || {})) {
     if (value !== "" && value !== null && value !== undefined) {
@@ -430,10 +435,13 @@ async function apiGet<T>(
 }
 
 function recordSelection(apiBase: string, apiKey: string, type: "institution" | "faculty" | "department", publicId: string) {
+  const normalizedApiKey = normalizeApiKey(apiKey);
+  if (!isValidApiKey(normalizedApiKey)) return;
+
   try {
     fetch(`${apiBase}/v1/selections`, {
       method: "POST",
-      headers: createHeaders(apiKey, { "Content-Type": "application/json" }),
+      headers: createHeaders(normalizedApiKey, { "Content-Type": "application/json" }),
       body: JSON.stringify({ type, publicId }),
       keepalive: true
     }).catch(() => {});
@@ -442,11 +450,16 @@ function recordSelection(apiBase: string, apiKey: string, type: "institution" | 
   }
 }
 
-function getStoredApiKey() {
+function clearLegacyApiKeyStorage() {
   try {
-    return window.sessionStorage.getItem(API_KEY_STORAGE_KEY) || "";
+    window.sessionStorage.removeItem(LEGACY_API_KEY_STORAGE_KEY);
   } catch {
-    return "";
+    // Ignore storage failures.
+  }
+  try {
+    window.localStorage.removeItem(LEGACY_API_KEY_STORAGE_KEY);
+  } catch {
+    // Ignore storage failures.
   }
 }
 
@@ -481,6 +494,10 @@ function App() {
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
   }, []);
+
+  React.useEffect(() => {
+    clearLegacyApiKeyStorage();
+  }, [path]);
 
   React.useEffect(() => {
     document.documentElement.lang = locale;
@@ -696,7 +713,7 @@ function Layout({
 
 function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
   const text = UI_TEXT[locale];
-  const [apiKey, setApiKey] = React.useState(getStoredApiKey);
+  const [apiKey, setApiKey] = React.useState("");
   const [institutionType, setInstitutionType] = React.useState("");
   const [prefecture, setPrefecture] = React.useState<PrefectureOption | null>(null);
   const [schoolQuery, setSchoolQuery] = React.useState("");
@@ -711,24 +728,21 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
   const [department, setDepartment] = React.useState<Department | null>(null);
   const [departmentLoading, setDepartmentLoading] = React.useState(false);
   const [flowError, setFlowError] = React.useState("");
-
-  React.useEffect(() => {
-    try {
-      if (apiKey.trim()) {
-        window.sessionStorage.setItem(API_KEY_STORAGE_KEY, apiKey.trim());
-      } else {
-        window.sessionStorage.removeItem(API_KEY_STORAGE_KEY);
-      }
-    } catch {
-      // Ignore sessionStorage failures; the key is still used for this render.
-    }
-  }, [apiKey]);
+  const normalizedApiKey = React.useMemo(() => normalizeApiKey(apiKey), [apiKey]);
+  const hasApiKey = normalizedApiKey.length > 0;
+  const apiKeyValid = isValidApiKey(normalizedApiKey);
 
   React.useEffect(() => {
     const query = schoolQuery.trim();
     if ([...query].length < MIN_QUERY_LEN) {
       setSchoolOptions([]);
       setSchoolError("");
+      return;
+    }
+    if (!apiKeyValid) {
+      setSchoolOptions([]);
+      setSchoolError("");
+      setSchoolLoading(false);
       return;
     }
 
@@ -739,7 +753,7 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
       try {
         const data = await apiGet<ListResponse<Institution>>(
           apiBase,
-          apiKey,
+          normalizedApiKey,
           "/v1/institutions",
           {
             q: query,
@@ -763,7 +777,7 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
       window.clearTimeout(timer);
       controller.abort();
     };
-  }, [apiBase, apiKey, institutionType, prefecture, schoolQuery]);
+  }, [apiBase, apiKeyValid, institutionType, normalizedApiKey, prefecture, schoolQuery]);
 
   const resetDownstream = React.useCallback(() => {
     setSchool(null);
@@ -781,13 +795,13 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
       setDepartments([]);
       setDepartment(null);
       setFlowError("");
-      recordSelection(apiBase, apiKey, "institution", nextSchool.publicId);
+      recordSelection(apiBase, normalizedApiKey, "institution", nextSchool.publicId);
 
       setFacultyLoading(true);
       try {
         const data = await apiGet<ListResponse<Faculty>>(
           apiBase,
-          apiKey,
+          normalizedApiKey,
           `/v1/institutions/${encodeURIComponent(nextSchool.publicId)}/faculties`,
           { limit: MAX_ITEMS }
         );
@@ -803,7 +817,7 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
         setFacultyLoading(false);
       }
     },
-    [apiBase, apiKey]
+    [apiBase, normalizedApiKey]
   );
 
   const loadDepartments = React.useCallback(
@@ -811,13 +825,13 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
       setFaculty(nextFaculty);
       setDepartment(null);
       setFlowError("");
-      if (!opts?.auto) recordSelection(apiBase, apiKey, "faculty", nextFaculty.publicId);
+      if (!opts?.auto) recordSelection(apiBase, normalizedApiKey, "faculty", nextFaculty.publicId);
 
       setDepartmentLoading(true);
       try {
         const data = await apiGet<ListResponse<Department>>(
           apiBase,
-          apiKey,
+          normalizedApiKey,
           `/v1/faculties/${encodeURIComponent(nextFaculty.publicId)}/departments`,
           { limit: MAX_ITEMS }
         );
@@ -833,7 +847,7 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
         setDepartmentLoading(false);
       }
     },
-    [apiBase, apiKey]
+    [apiBase, normalizedApiKey]
   );
 
   const handleSchoolChange = (_event: React.SyntheticEvent, nextSchool: Institution | null) => {
@@ -860,7 +874,7 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
     const nextDepartment = departments.find((item) => item.publicId === event.target.value);
     if (!nextDepartment) return;
     setDepartment(nextDepartment);
-    recordSelection(apiBase, apiKey, "department", nextDepartment.publicId);
+    recordSelection(apiBase, normalizedApiKey, "department", nextDepartment.publicId);
   };
 
   return (
@@ -875,14 +889,23 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
             <TextField
               label={text.apiKeyLabel}
               value={apiKey}
-              type="password"
+              type="text"
+              name="sdb-api-access-key"
               autoComplete="off"
-              onChange={(event) => setApiKey(event.target.value)}
+              inputProps={{
+                autoComplete: "off",
+                autoCapitalize: "none",
+                spellCheck: false,
+                "data-1p-ignore": "true",
+                "data-lpignore": "true"
+              }}
+              error={hasApiKey && !apiKeyValid}
+              onChange={(event) => setApiKey(event.target.value.replace(/\s+/g, ""))}
               placeholder={text.apiKeyPlaceholder}
               fullWidth
             />
 
-            {!apiKey.trim() ? (
+            {!hasApiKey ? (
               <Alert severity="warning" icon={<KeyRoundedIcon />} sx={{ alignItems: "center" }}>
                 {text.apiKeyMissing}{" "}
                 <Link href={API_KEY_REQUEST_URL} target="_blank" rel="noreferrer" fontWeight={700}>
@@ -890,6 +913,8 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
                 </Link>
                 {locale === "ja" ? text.apiKeySuffix : ` ${text.apiKeySuffix}`}
               </Alert>
+            ) : !apiKeyValid ? (
+              <Alert severity="error">{text.apiKeyInvalid}</Alert>
             ) : (
               <Alert severity="success">{text.apiKeyReady}</Alert>
             )}

@@ -7,10 +7,10 @@
 sDB では外部API非依存で決定的に生成する (academic_field と同方針):
 
   - primary    : 正式名称 (display_name の漢字、英語 name は language_code='en')
-  - alias       : 読み (pykakasi のひらがな) と ローマ字 (hepburn, language_code='ja-Latn')
+  - alias       : 読み (pykakasi のひらがな / カタカナ) と ローマ字 (hepburn, language_code='ja-Latn')
   - abbreviation: 接尾辞 (大学/大学院/専門学校 等) を除いた略称
 
-これにより検索 API は漢字・英語・かな・ローマ字・略称のいずれでも引けるようになる。
+これにより検索 API は漢字・英語・ひらがな・カタカナ・ローマ字・略称のいずれでも引けるようになる。
 
 出力 (既定で data/processed/combined_db_csv 内):
   - institution_terms.csv (institution_public_id, term, term_type, language_code, weight)
@@ -45,6 +45,10 @@ _kks = pykakasi.kakasi()
 
 def to_hira(text: str) -> str:
     return "".join(part["hira"] for part in _kks.convert(text)).strip()
+
+
+def to_kana(text: str) -> str:
+    return "".join(part["kana"] for part in _kks.convert(text)).strip()
 
 
 def to_roma(text: str) -> str:
@@ -108,14 +112,16 @@ def build_institution_terms(rows: list[dict[str, str]]) -> TermWriter:
         if name_en and name_en != display:
             w.add(pid, name_en, "primary", "en", 1.0)
             w.add(pid, name_en.lower(), "alias", "en", 0.6)
-        # alias: 読み (ひらがな) と ローマ字
+        # alias: 読み (ひらがな / カタカナ) と ローマ字
         w.add(pid, to_hira(display), "alias", "ja", 0.6)
+        w.add(pid, to_kana(display), "alias", "ja-Kana", 0.6)
         w.add(pid, to_roma(display), "alias", "ja-Latn", 0.6)
         # abbreviation: 接尾辞除去 + その読み
         abbr = abbreviation(display)
         if abbr:
             w.add(pid, abbr, "abbreviation", "ja", 0.4)
             w.add(pid, to_hira(abbr), "alias", "ja", 0.4)
+            w.add(pid, to_kana(abbr), "alias", "ja-Kana", 0.4)
             w.add(pid, to_roma(abbr), "alias", "ja-Latn", 0.4)
     return w
 
@@ -127,6 +133,7 @@ def build_faculty_terms(rows: list[dict[str, str]]) -> TermWriter:
         display = r.get("display_name", "")
         w.add(pid, display, "primary", "ja", 1.0)
         w.add(pid, to_hira(display), "alias", "ja", 0.6)
+        w.add(pid, to_kana(display), "alias", "ja-Kana", 0.6)
         w.add(pid, to_roma(display), "alias", "ja-Latn", 0.6)
     return w
 

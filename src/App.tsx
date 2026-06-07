@@ -942,6 +942,7 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
               options={schoolOptions}
               loading={schoolLoading}
               getOptionLabel={(option) => option.displayName}
+              filterOptions={(options) => options}
               isOptionEqualToValue={(option, value) => option.publicId === value.publicId}
               noOptionsText={schoolQuery.trim() ? text.schoolNoMatch : text.schoolNoOptions}
               onInputChange={(_event, nextValue, reason) => {

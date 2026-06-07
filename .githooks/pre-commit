@@ -1,0 +1,134 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(git rev-parse --show-toplevel)"
+
+if command -v go >/dev/null 2>&1; then
+  export PATH="$(go env GOPATH)/bin:$PATH"
+fi
+
+need() {
+  if ! command -v "$1" >/dev/null 2>&1; then
+    echo "pre-commit: $1 is required." >&2
+    exit 1
+  fi
+}
+
+has_script() {
+  node -e "const p=require('./package.json'); process.exit(p.scripts && p.scripts[process.argv[1]] ? 0 : 1)" "$1" 2>/dev/null
+}
+
+package_manager() {
+  if [ -f pnpm-lock.yaml ]; then
+    echo pnpm
+  else
+    echo npm
+  fi
+}
+
+run_pkg() {
+  local manager="$1"
+  shift
+  if [ "$manager" = pnpm ]; then
+    pnpm run "$@"
+  else
+    npm run "$@"
+  fi
+}
+
+run_exec() {
+  local manager="$1"
+  shift
+  if [ "$manager" = pnpm ]; then
+    pnpm exec "$@"
+  else
+    npx --no-install "$@"
+  fi
+}
+
+echo "==> gitleaks"
+need gitleaks
+gitleaks detect --redact --no-banner --source .
+
+echo "==> semgrep"
+need semgrep
+semgrep scan --config auto --error
+
+if [ -f package.json ]; then
+  manager="$(package_manager)"
+
+  echo "==> npm audit"
+  if [ "$manager" = pnpm ]; then
+    pnpm audit
+  else
+    npm audit
+  fi
+
+  echo "==> eslint"
+  if has_script lint; then
+    run_pkg "$manager" lint
+  else
+    run_exec "$manager" eslint . --max-warnings=0
+  fi
+
+  echo "==> prettier"
+  run_exec "$manager" prettier --check .
+
+  if has_script typecheck; then
+    echo "==> type check"
+    run_pkg "$manager" typecheck
+  fi
+
+  if has_script build; then
+    echo "==> build"
+    run_pkg "$manager" build
+  fi
+fi
+
+go_mods=()
+while IFS= read -r mod; do
+  go_mods+=("$mod")
+done < <(git ls-files | grep -E '(^|/)go\.mod$' | grep -vE '(^|/)vendor/' || true)
+if [ "${#go_mods[@]}" -gt 0 ]; then
+  need go
+  need gofmt
+  need govulncheck
+  export GOTOOLCHAIN="${GOTOOLCHAIN:-go1.26.4}"
+
+  for mod in "${go_mods[@]}"; do
+    dir="$(dirname "$mod")"
+    if [ "$dir" != "." ]; then
+      pushd "$dir" >/dev/null
+    fi
+
+    echo "==> gofmt ($dir)"
+    go_files=()
+    while IFS= read -r go_file; do
+      go_files+=("$go_file")
+    done < <(git ls-files '*.go')
+    if [ "${#go_files[@]}" -gt 0 ]; then
+      unformatted="$(gofmt -l "${go_files[@]}")"
+      if [ -n "$unformatted" ]; then
+        echo "pre-commit: gofmt required for:" >&2
+        echo "$unformatted" >&2
+        exit 1
+      fi
+    fi
+
+    echo "==> go vet ($dir)"
+    go vet ./...
+
+    echo "==> go test ($dir)"
+    go test ./...
+
+    echo "==> govulncheck ($dir)"
+    govulncheck ./...
+
+    echo "==> go build ($dir)"
+    go build ./...
+
+    if [ "$dir" != "." ]; then
+      popd >/dev/null
+    fi
+  done
+fi

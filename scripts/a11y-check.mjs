@@ -9,7 +9,7 @@ function summarizeViolations(violations) {
     id: violation.id,
     impact: violation.impact,
     description: violation.description,
-    nodes: violation.nodes.map((node) => node.target)
+    nodes: violation.nodes.map((node) => node.target),
   }));
 }
 
@@ -18,17 +18,21 @@ async function assertKeyboardBasics(page, baseUrl) {
   await page.keyboard.press("Tab");
   const firstFocus = await page.evaluate(() => ({
     id: document.activeElement?.id,
-    text: document.activeElement?.textContent?.trim()
+    text: document.activeElement?.textContent?.trim(),
   }));
   if (!firstFocus.text?.includes("本文へスキップ")) {
-    throw new Error(`Expected skip link to receive first focus, got ${JSON.stringify(firstFocus)}`);
+    throw new Error(
+      `Expected skip link to receive first focus, got ${JSON.stringify(firstFocus)}`,
+    );
   }
 
   await page.keyboard.press("Enter");
   await page.waitForTimeout(100);
   const skippedTo = await page.evaluate(() => document.activeElement?.id);
   if (skippedTo !== "main-content") {
-    throw new Error(`Expected skip link to move focus to main-content, got ${skippedTo}`);
+    throw new Error(
+      `Expected skip link to move focus to main-content, got ${skippedTo}`,
+    );
   }
 
   await page.getByRole("link", { name: "概要" }).click();
@@ -36,13 +40,17 @@ async function assertKeyboardBasics(page, baseUrl) {
   await page.waitForTimeout(100);
   const routeFocus = await page.evaluate(() => document.activeElement?.id);
   if (routeFocus !== "main-content") {
-    throw new Error(`Expected SPA navigation to focus main-content, got ${routeFocus}`);
+    throw new Error(
+      `Expected SPA navigation to focus main-content, got ${routeFocus}`,
+    );
   }
 }
 
 await withStaticPreview(async (baseUrl) => {
   const browser = await chromium.launch({ headless: true });
-  const context = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+  const context = await browser.newContext({
+    viewport: { width: 1280, height: 900 },
+  });
   const page = await context.newPage();
   const failures = [];
 
@@ -51,7 +59,10 @@ await withStaticPreview(async (baseUrl) => {
       await page.goto(`${baseUrl}${route}`, { waitUntil: "networkidle" });
       const results = await new AxeBuilder({ page }).analyze();
       if (results.violations.length > 0) {
-        failures.push({ route, violations: summarizeViolations(results.violations) });
+        failures.push({
+          route,
+          violations: summarizeViolations(results.violations),
+        });
       }
     }
 

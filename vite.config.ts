@@ -9,16 +9,21 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          mui: ["@mui/material", "@mui/icons-material", "@emotion/react", "@emotion/styled"],
-          markdown: ["marked"]
-        }
-      }
-    }
+          mui: [
+            "@mui/material",
+            "@mui/icons-material",
+            "@emotion/react",
+            "@emotion/styled",
+          ],
+          markdown: ["marked"],
+        },
+      },
+    },
   },
   server: {
-    host: "127.0.0.1"
+    host: "127.0.0.1",
   },
   preview: {
-    host: "127.0.0.1"
-  }
+    host: "127.0.0.1",
+  },
 });

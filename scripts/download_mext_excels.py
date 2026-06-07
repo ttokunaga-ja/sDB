@@ -96,6 +96,9 @@ def normalize_text(value: str) -> str:
 
 
 def request_url(url: str, method: str = "GET") -> Request:
+    parsed = urlparse(url)
+    if parsed.scheme != "https":
+        raise ValueError(f"Only https URLs are supported: {url}")
     return Request(url, headers={"User-Agent": USER_AGENT}, method=method)
 
 
@@ -103,7 +106,7 @@ def fetch_bytes(url: str) -> tuple[bytes, dict[str, str], int]:
     last_error: Exception | None = None
     for attempt in range(1, RETRY_COUNT + 1):
         try:
-            with urlopen(request_url(url), timeout=REQUEST_TIMEOUT_SECONDS) as response:
+            with urlopen(request_url(url), timeout=REQUEST_TIMEOUT_SECONDS) as response:  # nosemgrep: python.lang.security.audit.dynamic-urllib-use-detected.dynamic-urllib-use-detected
                 headers = {key.lower(): value for key, value in response.headers.items()}
                 return response.read(), headers, response.status
         except (HTTPError, URLError, TimeoutError) as exc:
@@ -132,7 +135,7 @@ def head_metadata(url: str) -> tuple[int | None, dict[str, str]]:
     last_error: Exception | None = None
     for attempt in range(1, RETRY_COUNT + 1):
         try:
-            with urlopen(request_url(url, method="HEAD"), timeout=REQUEST_TIMEOUT_SECONDS) as response:
+            with urlopen(request_url(url, method="HEAD"), timeout=REQUEST_TIMEOUT_SECONDS) as response:  # nosemgrep: python.lang.security.audit.dynamic-urllib-use-detected.dynamic-urllib-use-detected
                 return response.status, {key.lower(): value for key, value in response.headers.items()}
         except (HTTPError, URLError, TimeoutError) as exc:
             last_error = exc

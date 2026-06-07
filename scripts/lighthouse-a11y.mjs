@@ -7,7 +7,7 @@ const minScore = 0.9;
 
 await withStaticPreview(async (baseUrl) => {
   const chrome = await chromeLauncher.launch({
-    chromeFlags: ["--headless=new", "--no-sandbox", "--disable-gpu"]
+    chromeFlags: ["--headless=new", "--no-sandbox", "--disable-gpu"],
   });
 
   try {
@@ -16,13 +16,19 @@ await withStaticPreview(async (baseUrl) => {
       const result = await lighthouse(`${baseUrl}${route}`, {
         port: chrome.port,
         onlyCategories: ["accessibility"],
-        logLevel: "error"
+        logLevel: "error",
       });
       const score = result?.lhr.categories.accessibility.score ?? 0;
       results.push({ route, score: Math.round(score * 100) });
     }
 
-    console.log(JSON.stringify({ minScore: Math.round(minScore * 100), results }, null, 2));
+    console.log(
+      JSON.stringify(
+        { minScore: Math.round(minScore * 100), results },
+        null,
+        2,
+      ),
+    );
 
     const failed = results.filter((result) => result.score < minScore * 100);
     if (failed.length > 0) {

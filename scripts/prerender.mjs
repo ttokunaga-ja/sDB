@@ -12,26 +12,29 @@ const docs = {
     route: "/overview/",
     title: "概要と使用方法 | sDB",
     lead: "sDBは、日本の教育機関を検索するためのページです。",
-    markdown: fs.readFileSync(path.join(root, "content/ja/overview.md"), "utf8")
+    markdown: fs.readFileSync(
+      path.join(root, "content/ja/overview.md"),
+      "utf8",
+    ),
   },
   api: {
     route: "/api/",
     title: "APIドキュメント | sDB",
     lead: "sDB API の認証、エンドポイント、リクエスト、レスポンス仕様です。",
-    markdown: fs.readFileSync(path.join(root, "content/ja/api.md"), "utf8")
+    markdown: fs.readFileSync(path.join(root, "content/ja/api.md"), "utf8"),
   },
   notices: {
     route: "/notices/",
     title: "注意事項 | sDB",
     lead: "検索結果の出典、加工内容、利用時の注意事項です。",
-    markdown: fs.readFileSync(path.join(root, "content/ja/notices.md"), "utf8")
-  }
+    markdown: fs.readFileSync(path.join(root, "content/ja/notices.md"), "utf8"),
+  },
 };
 
 const description = "文部科学省公開資料を加工した教育機関検索ページ。";
 
 function escapeHtml(value) {
-  return value
+  return value // nosemgrep: javascript.audit.detect-replaceall-sanitization.detect-replaceall-sanitization
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
@@ -110,23 +113,41 @@ function pageHtml(template, title, body) {
   return template
     .replace(/<html lang="[^"]*">/, '<html lang="ja">')
     .replace(/<title>.*?<\/title>/, `<title>${escapeHtml(title)}</title>`)
-    .replace(/<meta name="description" content="[^"]*" \/>/, `<meta name="description" content="${escapeHtml(description)}" />`)
-    .replace(/<meta property="og:title" content="[^"]*" \/>/, `<meta property="og:title" content="${escapeHtml(title)}" />`)
-    .replace(/<meta property="og:description" content="[^"]*" \/>/, `<meta property="og:description" content="${escapeHtml(description)}" />`)
-    .replace(/<meta name="twitter:title" content="[^"]*" \/>/, `<meta name="twitter:title" content="${escapeHtml(title)}" />`)
-    .replace(/<meta name="twitter:description" content="[^"]*" \/>/, `<meta name="twitter:description" content="${escapeHtml(description)}" />`)
+    .replace(
+      /<meta name="description" content="[^"]*" \/>/,
+      `<meta name="description" content="${escapeHtml(description)}" />`,
+    )
+    .replace(
+      /<meta property="og:title" content="[^"]*" \/>/,
+      `<meta property="og:title" content="${escapeHtml(title)}" />`,
+    )
+    .replace(
+      /<meta property="og:description" content="[^"]*" \/>/,
+      `<meta property="og:description" content="${escapeHtml(description)}" />`,
+    )
+    .replace(
+      /<meta name="twitter:title" content="[^"]*" \/>/,
+      `<meta name="twitter:title" content="${escapeHtml(title)}" />`,
+    )
+    .replace(
+      /<meta name="twitter:description" content="[^"]*" \/>/,
+      `<meta name="twitter:description" content="${escapeHtml(description)}" />`,
+    )
     .replace("</head>", `${prerenderStyle()}</head>`)
     .replace('<div id="root"></div>', `<div id="root">${body}</div>`);
 }
 
 function writeRoute(route, html) {
-  const outDir = route === "/" ? dist : path.join(dist, route.replace(/^\/|\/$/g, ""));
+  const outDir =
+    route === "/" ? dist : path.join(dist, route.replace(/^\/|\/$/g, ""));
   fs.mkdirSync(outDir, { recursive: true });
   fs.writeFileSync(path.join(outDir, "index.html"), html);
 }
 
 if (!fs.existsSync(templatePath)) {
-  throw new Error("dist/index.html was not found. Run vite build before prerender.");
+  throw new Error(
+    "dist/index.html was not found. Run vite build before prerender.",
+  );
 }
 
 const template = fs.readFileSync(templatePath, "utf8");
@@ -135,6 +156,9 @@ for (const doc of Object.values(docs)) {
   const html = pageHtml(template, doc.title, docPage(doc));
   writeRoute(doc.route, html);
 }
-writeRoute("/sources/", pageHtml(template, docs.notices.title, docPage(docs.notices)));
+writeRoute(
+  "/sources/",
+  pageHtml(template, docs.notices.title, docPage(docs.notices)),
+);
 
 console.log("Prerendered 5 static route(s).");

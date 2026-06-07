@@ -9,13 +9,13 @@ The relevant boundary is:
 
 ## Route Classification
 
-| Route | Current rendering | Reason |
-| --- | --- | --- |
-| `/` | Static prerender shell + CSR hydration | The page needs client-side API-key input, autocomplete, cascading selects, and API calls. The static shell exposes the search form labels and page purpose before JavaScript. |
-| `/overview/` | Static prerendered article + CSR hydration | Documentation content is Markdown-driven and SEO-relevant. It should be present in initial HTML. Code-copy buttons remain client-side. |
-| `/api/` | Static prerendered article + CSR hydration | API documentation is SEO- and developer-facing. Markdown content is present in initial HTML; code-copy buttons remain client-side. |
-| `/notices/` | Static prerendered article + CSR hydration | Source, processing, and disclaimer content should be available without waiting for React. |
-| `/sources/` | Static prerendered alias of notices + CSR hydration | Backward-compatible notices route. |
+| Route        | Current rendering                                   | Reason                                                                                                                                                                        |
+| ------------ | --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/`          | Static prerender shell + CSR hydration              | The page needs client-side API-key input, autocomplete, cascading selects, and API calls. The static shell exposes the search form labels and page purpose before JavaScript. |
+| `/overview/` | Static prerendered article + CSR hydration          | Documentation content is Markdown-driven and SEO-relevant. It should be present in initial HTML. Code-copy buttons remain client-side.                                        |
+| `/api/`      | Static prerendered article + CSR hydration          | API documentation is SEO- and developer-facing. Markdown content is present in initial HTML; code-copy buttons remain client-side.                                            |
+| `/notices/`  | Static prerendered article + CSR hydration          | Source, processing, and disclaimer content should be available without waiting for React.                                                                                     |
+| `/sources/`  | Static prerendered alias of notices + CSR hydration | Backward-compatible notices route.                                                                                                                                            |
 
 ## Client-Side Responsibilities
 

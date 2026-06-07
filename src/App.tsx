@@ -36,7 +36,7 @@ import {
   Toolbar,
   Tooltip,
   Typography,
-  type SelectChangeEvent
+  type SelectChangeEvent,
 } from "@mui/material";
 import { marked } from "marked";
 import React from "react";
@@ -109,7 +109,7 @@ const INSTITUTION_TYPE_LABELS: Record<string, string> = {
   technical_college: "高等専門学校",
   technical_college_advanced: "高専専攻科",
   high_school: "高等学校",
-  vocational_school: "専門学校"
+  vocational_school: "専門学校",
 };
 
 const INSTITUTION_TYPE_LABELS_EN: Record<string, string> = {
@@ -119,7 +119,7 @@ const INSTITUTION_TYPE_LABELS_EN: Record<string, string> = {
   technical_college: "College of technology",
   technical_college_advanced: "Advanced course",
   high_school: "High school",
-  vocational_school: "Vocational school"
+  vocational_school: "Vocational school",
 };
 
 const ACADEMIC_FIELD_LABELS: Record<string, string> = {
@@ -133,7 +133,7 @@ const ACADEMIC_FIELD_LABELS: Record<string, string> = {
   engineering: "工学・製造・建設",
   agriculture: "農林水産・獣医",
   health_and_welfare: "保健・福祉",
-  services: "サービス"
+  services: "サービス",
 };
 
 const ACADEMIC_FIELD_LABELS_EN: Record<string, string> = {
@@ -147,17 +147,17 @@ const ACADEMIC_FIELD_LABELS_EN: Record<string, string> = {
   engineering: "Engineering, manufacturing, and construction",
   agriculture: "Agriculture, forestry, fisheries, and veterinary",
   health_and_welfare: "Health and welfare",
-  services: "Services"
+  services: "Services",
 };
 
 const ACADEMIC_TRACK_LABELS: Record<string, string> = {
   science: "理系",
-  humanities: "文系"
+  humanities: "文系",
 };
 
 const ACADEMIC_TRACK_LABELS_EN: Record<string, string> = {
   science: "Science",
-  humanities: "Humanities"
+  humanities: "Humanities",
 };
 
 const PREFECTURES: PrefectureOption[] = [
@@ -207,50 +207,57 @@ const PREFECTURES: PrefectureOption[] = [
   ["JP-44", "大分県", "おおいた oita"],
   ["JP-45", "宮崎県", "みやざき miyazaki"],
   ["JP-46", "鹿児島県", "かごしま kagoshima"],
-  ["JP-47", "沖縄県", "おきなわ okinawa"]
+  ["JP-47", "沖縄県", "おきなわ okinawa"],
 ].map(([code, name, reading]) => ({ code, name, reading }));
 
-const NAV_ITEMS: Array<{ key: DocPageKey; href: string; icon: React.ReactNode }> = [
+const NAV_ITEMS: Array<{
+  key: DocPageKey;
+  href: string;
+  icon: React.ReactNode;
+}> = [
   { key: "overview", href: "/overview/", icon: <InfoRoundedIcon /> },
   { key: "api", href: "/api/", icon: <ArticleRoundedIcon /> },
-  { key: "notices", href: "/notices/", icon: <PolicyRoundedIcon /> }
+  { key: "notices", href: "/notices/", icon: <PolicyRoundedIcon /> },
 ];
 
-const DOC_PAGES: Record<Locale, Record<DocPageKey, { title: string; lead: string; markdown: string }>> = {
+const DOC_PAGES: Record<
+  Locale,
+  Record<DocPageKey, { title: string; lead: string; markdown: string }>
+> = {
   ja: {
     overview: {
       title: "概要と使用方法",
       lead: "sDBは、日本の教育機関を検索するためのページです。",
-      markdown: overviewMarkdown
+      markdown: overviewMarkdown,
     },
     api: {
       title: "APIドキュメント",
       lead: "sDB API の認証、エンドポイント、リクエスト、レスポンス仕様です。",
-      markdown: apiMarkdown
+      markdown: apiMarkdown,
     },
     notices: {
       title: "注意事項",
       lead: "検索結果の出典、加工内容、利用時の注意事項です。",
-      markdown: noticesMarkdown
-    }
+      markdown: noticesMarkdown,
+    },
   },
   en: {
     overview: {
       title: "Overview",
       lead: "sDB is a page for searching Japanese educational institutions.",
-      markdown: overviewMarkdownEn
+      markdown: overviewMarkdownEn,
     },
     api: {
       title: "API Guide",
       lead: "Authentication, endpoints, requests, and responses for using the sDB API.",
-      markdown: apiMarkdownEn
+      markdown: apiMarkdownEn,
     },
     notices: {
       title: "Notices",
       lead: "Source attribution, processing details, and important notes for search results.",
-      markdown: noticesMarkdownEn
-    }
-  }
+      markdown: noticesMarkdownEn,
+    },
+  },
 };
 
 const UI_TEXT = {
@@ -261,7 +268,7 @@ const UI_TEXT = {
       overview: "概要と使用方法 | sDB",
       api: "APIドキュメント | sDB",
       notices: "注意事項 | sDB",
-      notFound: "ページが見つかりません | sDB"
+      notFound: "ページが見つかりません | sDB",
     },
     menu: "メニュー",
     openMenu: "メニューを開く",
@@ -279,7 +286,8 @@ const UI_TEXT = {
     apiKeyMissing: "APIキーが未入力です。",
     apiKeyContact: "ポートフォリオのContactページ",
     apiKeySuffix: "から取得導線へ進んでください。",
-    apiKeyInvalid: "APIキーの形式が正しくありません。tkp_ から始まる 68 文字のキーを入力してください。",
+    apiKeyInvalid:
+      "APIキーの形式が正しくありません。tkp_ から始まる 68 文字のキーを入力してください。",
     allInstitutionTypes: "すべての学校種別",
     institutionTypeAria: "学校種別",
     prefectureLabel: "都道府県（任意）",
@@ -302,7 +310,7 @@ const UI_TEXT = {
     summaryDepartment: "学科",
     notFoundTitle: "ページが見つかりません",
     notFoundBody: "指定されたページはsDBの公開ページには存在しません。",
-    backHome: "検索ページへ戻る"
+    backHome: "検索ページへ戻る",
   },
   en: {
     nav: { overview: "Overview", api: "API", notices: "Notices" },
@@ -311,7 +319,7 @@ const UI_TEXT = {
       overview: "Overview | sDB",
       api: "API Guide | sDB",
       notices: "Notices | sDB",
-      notFound: "Page Not Found | sDB"
+      notFound: "Page Not Found | sDB",
     },
     menu: "Menu",
     openMenu: "Open menu",
@@ -352,8 +360,8 @@ const UI_TEXT = {
     summaryDepartment: "Department",
     notFoundTitle: "Page Not Found",
     notFoundBody: "The requested page does not exist on sDB.",
-    backHome: "Back to Search"
-  }
+    backHome: "Back to Search",
+  },
 } as const;
 
 function normalizePath(pathname: string): string {
@@ -376,22 +384,27 @@ function resolveApiBase() {
 }
 
 function typeLabel(value?: string, locale: Locale = "ja") {
-  const labels = locale === "en" ? INSTITUTION_TYPE_LABELS_EN : INSTITUTION_TYPE_LABELS;
+  const labels =
+    locale === "en" ? INSTITUTION_TYPE_LABELS_EN : INSTITUTION_TYPE_LABELS;
   return value ? labels[value] || value : "";
 }
 
 function fieldLabel(value?: string, locale: Locale = "ja") {
-  const labels = locale === "en" ? ACADEMIC_FIELD_LABELS_EN : ACADEMIC_FIELD_LABELS;
+  const labels =
+    locale === "en" ? ACADEMIC_FIELD_LABELS_EN : ACADEMIC_FIELD_LABELS;
   return value ? labels[value] || value : "";
 }
 
 function trackLabel(value?: string, locale: Locale = "ja") {
-  const labels = locale === "en" ? ACADEMIC_TRACK_LABELS_EN : ACADEMIC_TRACK_LABELS;
+  const labels =
+    locale === "en" ? ACADEMIC_TRACK_LABELS_EN : ACADEMIC_TRACK_LABELS;
   return value ? labels[value] || value : "";
 }
 
 function prefLabel(value?: string) {
-  return value ? PREFECTURES.find((pref) => pref.code === value)?.name || value : "";
+  return value
+    ? PREFECTURES.find((pref) => pref.code === value)?.name || value
+    : "";
 }
 
 function selectPlaceholder(label: string) {
@@ -411,7 +424,7 @@ const visuallyHiddenSx = {
   padding: 0,
   position: "absolute",
   whiteSpace: "nowrap",
-  width: 1
+  width: 1,
 } as const;
 
 function createHeaders(apiKey: string, extra?: Record<string, string>) {
@@ -434,10 +447,11 @@ async function apiGet<T>(
   apiKey: string,
   path: string,
   params?: Record<string, string | number | undefined | null>,
-  signal?: AbortSignal
+  signal?: AbortSignal,
 ): Promise<T> {
   const normalizedApiKey = normalizeApiKey(apiKey);
-  if (!isValidApiKey(normalizedApiKey)) throw new Error("APIキーの形式が正しくありません");
+  if (!isValidApiKey(normalizedApiKey))
+    throw new Error("APIキーの形式が正しくありません");
 
   const url = new URL(`${apiBase}${path}`);
   for (const [key, value] of Object.entries(params || {})) {
@@ -452,16 +466,23 @@ async function apiGet<T>(
   return response.json() as Promise<T>;
 }
 
-function recordSelection(apiBase: string, apiKey: string, type: "institution" | "faculty" | "department", publicId: string) {
+function recordSelection(
+  apiBase: string,
+  apiKey: string,
+  type: "institution" | "faculty" | "department",
+  publicId: string,
+) {
   const normalizedApiKey = normalizeApiKey(apiKey);
   if (!isValidApiKey(normalizedApiKey)) return;
 
   try {
     fetch(`${apiBase}/v1/selections`, {
       method: "POST",
-      headers: createHeaders(normalizedApiKey, { "Content-Type": "application/json" }),
+      headers: createHeaders(normalizedApiKey, {
+        "Content-Type": "application/json",
+      }),
       body: JSON.stringify({ type, publicId }),
-      keepalive: true
+      keepalive: true,
     }).catch(() => {});
   } catch {
     // Selection telemetry must not block the search form.
@@ -492,7 +513,9 @@ function getStoredLocale(): Locale {
 }
 
 function App() {
-  const [path, setPath] = React.useState(() => normalizePath(window.location.pathname));
+  const [path, setPath] = React.useState(() =>
+    normalizePath(window.location.pathname),
+  );
   const [locale, setLocaleState] = React.useState<Locale>(getStoredLocale);
   const page = pageFromPath(path);
   const apiBase = React.useMemo(() => resolveApiBase(), []);
@@ -534,20 +557,31 @@ function App() {
       <GlobalStyles
         styles={{
           "html, body, #root": {
-            minHeight: "100%"
+            minHeight: "100%",
           },
           body: {
-            backgroundColor: "var(--mui-palette-background-default)"
+            backgroundColor: "var(--mui-palette-background-default)",
           },
           "*, *::before, *::after": {
-            boxSizing: "border-box"
-          }
+            boxSizing: "border-box",
+          },
         }}
       />
-      <Layout currentPage={page} locale={locale} navigate={navigate} setLocale={setLocale}>
-        {page === "home" ? <HomePage apiBase={apiBase} locale={locale} /> : null}
-        {page === "overview" || page === "api" || page === "notices" ? <DocPage page={page} locale={locale} /> : null}
-        {page === "notFound" ? <NotFoundPage locale={locale} navigate={navigate} /> : null}
+      <Layout
+        currentPage={page}
+        locale={locale}
+        navigate={navigate}
+        setLocale={setLocale}
+      >
+        {page === "home" ? (
+          <HomePage apiBase={apiBase} locale={locale} />
+        ) : null}
+        {page === "overview" || page === "api" || page === "notices" ? (
+          <DocPage page={page} locale={locale} />
+        ) : null}
+        {page === "notFound" ? (
+          <NotFoundPage locale={locale} navigate={navigate} />
+        ) : null}
       </Layout>
     </ThemeProvider>
   );
@@ -558,7 +592,7 @@ function Layout({
   currentPage,
   locale,
   navigate,
-  setLocale
+  setLocale,
 }: {
   children: React.ReactNode;
   currentPage: PageKey;
@@ -592,7 +626,10 @@ function Layout({
     mainRef.current?.focus({ preventScroll: true });
   }, [currentPage]);
 
-  const handleNavigate = (event: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+  const handleNavigate = (
+    event: React.MouseEvent<HTMLAnchorElement>,
+    href: string,
+  ) => {
     event.preventDefault();
     setDrawerOpen(false);
     navigate(href);
@@ -619,8 +656,8 @@ function Layout({
           fontWeight: 800,
           textDecoration: "none",
           "&:focus": {
-            transform: "translateY(0)"
-          }
+            transform: "translateY(0)",
+          },
         }}
       >
         {text.skipToContent}
@@ -635,11 +672,14 @@ function Layout({
           borderBottom: 1,
           borderColor: "divider",
           backdropFilter: "blur(16px)",
-          backgroundColor: "background.default"
+          backgroundColor: "background.default",
         }}
       >
         <Container maxWidth="xl">
-          <Toolbar disableGutters sx={{ minHeight: { xs: 64, md: 72 }, gap: 2 }}>
+          <Toolbar
+            disableGutters
+            sx={{ minHeight: { xs: 64, md: 72 }, gap: 2 }}
+          >
             <Tooltip title={text.menu}>
               <IconButton
                 color="primary"
@@ -664,7 +704,7 @@ function Layout({
                 mr: "auto",
                 fontWeight: 800,
                 fontSize: { xs: "1.22rem", md: "1.36rem" },
-                lineHeight: 1
+                lineHeight: 1,
               }}
             >
               sDB
@@ -694,10 +734,14 @@ function Layout({
                       color: active ? "primary.main" : "text.secondary",
                       fontSize: "0.95rem",
                       fontWeight: active ? 800 : 700,
-                      backgroundColor: active ? "action.selected" : "transparent",
+                      backgroundColor: active
+                        ? "action.selected"
+                        : "transparent",
                       "&:hover": {
-                        backgroundColor: active ? "action.selected" : "action.hover"
-                      }
+                        backgroundColor: active
+                          ? "action.selected"
+                          : "action.hover",
+                      },
                     }}
                   >
                     {text.nav[item.key]}
@@ -730,8 +774,8 @@ function Layout({
             top: appBarHeight,
             height: appBarHeight ? `calc(100% - ${appBarHeight}px)` : "100%",
             borderTopRightRadius: 1,
-            borderBottomRightRadius: 1
-          }
+            borderBottomRightRadius: 1,
+          },
         }}
         sx={{ "& .MuiBackdrop-root": { top: appBarHeight } }}
       >
@@ -767,13 +811,12 @@ function Layout({
           outline: 0,
           "&:focus-visible": {
             outline: "3px solid var(--mui-palette-secondary-main)",
-            outlineOffset: -3
-          }
+            outlineOffset: -3,
+          },
         }}
       >
         {children}
       </Box>
-
     </Box>
   );
 }
@@ -782,7 +825,9 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
   const text = UI_TEXT[locale];
   const [apiKey, setApiKey] = React.useState("");
   const [institutionType, setInstitutionType] = React.useState("");
-  const [prefecture, setPrefecture] = React.useState<PrefectureOption | null>(null);
+  const [prefecture, setPrefecture] = React.useState<PrefectureOption | null>(
+    null,
+  );
   const [schoolQuery, setSchoolQuery] = React.useState("");
   const [schoolOptions, setSchoolOptions] = React.useState<Institution[]>([]);
   const [school, setSchool] = React.useState<Institution | null>(null);
@@ -795,18 +840,32 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
   const [department, setDepartment] = React.useState<Department | null>(null);
   const [departmentLoading, setDepartmentLoading] = React.useState(false);
   const [flowError, setFlowError] = React.useState("");
-  const normalizedApiKey = React.useMemo(() => normalizeApiKey(apiKey), [apiKey]);
+  const normalizedApiKey = React.useMemo(
+    () => normalizeApiKey(apiKey),
+    [apiKey],
+  );
   const hasApiKey = normalizedApiKey.length > 0;
   const apiKeyValid = isValidApiKey(normalizedApiKey);
-  const apiKeyDescriptionId = !hasApiKey ? "api-key-missing" : !apiKeyValid ? "api-key-error" : undefined;
-  const facultyPlaceholder = school ? (facultyLoading ? text.facultyLoading : text.facultyChoose) : text.facultyBeforeSchool;
+  const apiKeyDescriptionId = !hasApiKey
+    ? "api-key-missing"
+    : !apiKeyValid
+      ? "api-key-error"
+      : undefined;
+  const facultyPlaceholder = school
+    ? facultyLoading
+      ? text.facultyLoading
+      : text.facultyChoose
+    : text.facultyBeforeSchool;
   const departmentPlaceholder = faculty
     ? departmentLoading
       ? text.departmentLoading
       : text.departmentChoose
     : text.departmentBeforeFaculty;
   const apiKeyLabel = apiKeyValid ? (
-    <Box component="span" sx={{ display: "inline-flex", alignItems: "center", gap: 0.6 }}>
+    <Box
+      component="span"
+      sx={{ display: "inline-flex", alignItems: "center", gap: 0.6 }}
+    >
       <Box component="span">{text.apiKeyLabel}</Box>
       <Box
         component="span"
@@ -819,7 +878,7 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
           height: 16,
           borderRadius: 0.75,
           bgcolor: "success.main",
-          color: "success.contrastText"
+          color: "success.contrastText",
         }}
       >
         <CheckRoundedIcon sx={{ fontSize: 14 }} />
@@ -856,15 +915,20 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
             q: query,
             type: institutionType,
             prefectureCode: prefecture?.code,
-            limit: MAX_ITEMS
+            limit: MAX_ITEMS,
           },
-          controller.signal
+          controller.signal,
         );
         setSchoolOptions(data.items || []);
       } catch (error) {
-        if (error instanceof DOMException && error.name === "AbortError") return;
+        if (error instanceof DOMException && error.name === "AbortError")
+          return;
         setSchoolOptions([]);
-        setSchoolError(error instanceof Error ? error.message : "学校候補の取得に失敗しました");
+        setSchoolError(
+          error instanceof Error
+            ? error.message
+            : "学校候補の取得に失敗しました",
+        );
       } finally {
         setSchoolLoading(false);
       }
@@ -874,7 +938,14 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
       window.clearTimeout(timer);
       controller.abort();
     };
-  }, [apiBase, apiKeyValid, institutionType, normalizedApiKey, prefecture, schoolQuery]);
+  }, [
+    apiBase,
+    apiKeyValid,
+    institutionType,
+    normalizedApiKey,
+    prefecture,
+    schoolQuery,
+  ]);
 
   const resetDownstream = React.useCallback(() => {
     setSchool(null);
@@ -890,7 +961,13 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
       setFaculty(nextFaculty);
       setDepartment(null);
       setFlowError("");
-      if (!opts?.auto) recordSelection(apiBase, normalizedApiKey, "faculty", nextFaculty.publicId);
+      if (!opts?.auto)
+        recordSelection(
+          apiBase,
+          normalizedApiKey,
+          "faculty",
+          nextFaculty.publicId,
+        );
 
       setDepartmentLoading(true);
       try {
@@ -898,21 +975,26 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
           apiBase,
           normalizedApiKey,
           `/v1/faculties/${encodeURIComponent(nextFaculty.publicId)}/departments`,
-          { limit: MAX_ITEMS }
+          { limit: MAX_ITEMS },
         );
         const nextDepartments = data.items || [];
         setDepartments(nextDepartments);
-        if (nextDepartments.length === 1 && (data.total || nextDepartments.length) === 1) {
+        if (
+          nextDepartments.length === 1 &&
+          (data.total || nextDepartments.length) === 1
+        ) {
           setDepartment(nextDepartments[0]);
         }
       } catch (error) {
         setDepartments([]);
-        setFlowError(error instanceof Error ? error.message : "学科の取得に失敗しました");
+        setFlowError(
+          error instanceof Error ? error.message : "学科の取得に失敗しました",
+        );
       } finally {
         setDepartmentLoading(false);
       }
     },
-    [apiBase, normalizedApiKey]
+    [apiBase, normalizedApiKey],
   );
 
   const loadFaculties = React.useCallback(
@@ -922,7 +1004,12 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
       setDepartments([]);
       setDepartment(null);
       setFlowError("");
-      recordSelection(apiBase, normalizedApiKey, "institution", nextSchool.publicId);
+      recordSelection(
+        apiBase,
+        normalizedApiKey,
+        "institution",
+        nextSchool.publicId,
+      );
 
       setFacultyLoading(true);
       try {
@@ -930,24 +1017,34 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
           apiBase,
           normalizedApiKey,
           `/v1/institutions/${encodeURIComponent(nextSchool.publicId)}/faculties`,
-          { limit: MAX_ITEMS }
+          { limit: MAX_ITEMS },
         );
         const nextFaculties = data.items || [];
         setFaculties(nextFaculties);
-        if (nextFaculties.length === 1 && (data.total || nextFaculties.length) === 1) {
+        if (
+          nextFaculties.length === 1 &&
+          (data.total || nextFaculties.length) === 1
+        ) {
           await loadDepartments(nextFaculties[0], { auto: true });
         }
       } catch (error) {
         setFaculties([]);
-        setFlowError(error instanceof Error ? error.message : "学部・研究科の取得に失敗しました");
+        setFlowError(
+          error instanceof Error
+            ? error.message
+            : "学部・研究科の取得に失敗しました",
+        );
       } finally {
         setFacultyLoading(false);
       }
     },
-    [apiBase, loadDepartments, normalizedApiKey]
+    [apiBase, loadDepartments, normalizedApiKey],
   );
 
-  const handleSchoolChange = (_event: React.SyntheticEvent, nextSchool: Institution | null) => {
+  const handleSchoolChange = (
+    _event: React.SyntheticEvent,
+    nextSchool: Institution | null,
+  ) => {
     if (!nextSchool) {
       resetDownstream();
       return;
@@ -963,15 +1060,24 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
   };
 
   const handleFacultyChange = (event: SelectChangeEvent) => {
-    const nextFaculty = faculties.find((item) => item.publicId === event.target.value);
+    const nextFaculty = faculties.find(
+      (item) => item.publicId === event.target.value,
+    );
     if (nextFaculty) void loadDepartments(nextFaculty);
   };
 
   const handleDepartmentChange = (event: SelectChangeEvent) => {
-    const nextDepartment = departments.find((item) => item.publicId === event.target.value);
+    const nextDepartment = departments.find(
+      (item) => item.publicId === event.target.value,
+    );
     if (!nextDepartment) return;
     setDepartment(nextDepartment);
-    recordSelection(apiBase, normalizedApiKey, "department", nextDepartment.publicId);
+    recordSelection(
+      apiBase,
+      normalizedApiKey,
+      "department",
+      nextDepartment.publicId,
+    );
   };
 
   return (
@@ -983,7 +1089,10 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
           </Typography>
         </Box>
 
-        <Paper variant="outlined" sx={{ p: { xs: 2, sm: 3 }, maxWidth: 760, width: "100%" }}>
+        <Paper
+          variant="outlined"
+          sx={{ p: { xs: 2, sm: 3 }, maxWidth: 760, width: "100%" }}
+        >
           <Stack spacing={2.5}>
             <TextField
               id="sdb-api-key"
@@ -999,23 +1108,35 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
                 "aria-describedby": apiKeyDescriptionId,
                 "aria-invalid": hasApiKey && !apiKeyValid ? "true" : undefined,
                 "data-1p-ignore": "true",
-                "data-lpignore": "true"
+                "data-lpignore": "true",
               }}
               error={hasApiKey && !apiKeyValid}
-              onChange={(event) => setApiKey(event.target.value.replace(/\s+/g, ""))}
+              onChange={(event) =>
+                setApiKey(event.target.value.replace(/\s+/g, ""))
+              }
               placeholder={text.apiKeyPlaceholder}
               fullWidth
               sx={{
                 "& input": {
-                  "-webkit-text-security": hasApiKey ? "disc" : "none"
-                }
+                  "-webkit-text-security": hasApiKey ? "disc" : "none",
+                },
               }}
             />
 
             {!hasApiKey ? (
-              <Alert id="api-key-missing" severity="warning" icon={<KeyRoundedIcon />} sx={{ alignItems: "center" }}>
+              <Alert
+                id="api-key-missing"
+                severity="warning"
+                icon={<KeyRoundedIcon />}
+                sx={{ alignItems: "center" }}
+              >
                 {text.apiKeyMissing}{" "}
-                <Link href={API_KEY_REQUEST_URL} target="_blank" rel="noreferrer" fontWeight={700}>
+                <Link
+                  href={API_KEY_REQUEST_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  fontWeight={700}
+                >
                   {text.apiKeyContact}
                 </Link>
                 {locale === "ja" ? text.apiKeySuffix : ` ${text.apiKeySuffix}`}
@@ -1042,14 +1163,20 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
                   setInstitutionType(event.target.value);
                   handleFilterChange();
                 }}
-                sx={{ color: institutionType ? "text.primary" : "text.secondary" }}
+                sx={{
+                  color: institutionType ? "text.primary" : "text.secondary",
+                }}
                 renderValue={(selected) => {
                   const value = String(selected);
-                  return value ? typeLabel(value, locale) : selectPlaceholder(text.allInstitutionTypes);
+                  return value
+                    ? typeLabel(value, locale)
+                    : selectPlaceholder(text.allInstitutionTypes);
                 }}
               >
                 <MenuItem value="">
-                  <Typography color="text.secondary">{text.allInstitutionTypes}</Typography>
+                  <Typography color="text.secondary">
+                    {text.allInstitutionTypes}
+                  </Typography>
                 </MenuItem>
                 {Object.keys(INSTITUTION_TYPE_LABELS).map((value) => (
                   <MenuItem key={value} value={value}>
@@ -1067,7 +1194,9 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
                 const query = state.inputValue.trim().toLowerCase();
                 if (!query) return options;
                 return options.filter(
-                  (option) => option.name.includes(query) || option.reading.toLowerCase().includes(query)
+                  (option) =>
+                    option.name.includes(query) ||
+                    option.reading.toLowerCase().includes(query),
                 );
               }}
               onChange={(_event, nextPrefecture) => {
@@ -1075,7 +1204,11 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
                 handleFilterChange();
               }}
               renderInput={(params) => (
-                <TextField {...params} label={text.prefectureLabel} placeholder={text.prefecturePlaceholder} />
+                <TextField
+                  {...params}
+                  label={text.prefectureLabel}
+                  placeholder={text.prefecturePlaceholder}
+                />
               )}
             />
 
@@ -1086,8 +1219,12 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
               loading={schoolLoading}
               getOptionLabel={(option) => option.displayName}
               filterOptions={(options) => options}
-              isOptionEqualToValue={(option, value) => option.publicId === value.publicId}
-              noOptionsText={schoolQuery.trim() ? text.schoolNoMatch : text.schoolNoOptions}
+              isOptionEqualToValue={(option, value) =>
+                option.publicId === value.publicId
+              }
+              noOptionsText={
+                schoolQuery.trim() ? text.schoolNoMatch : text.schoolNoOptions
+              }
               onInputChange={(_event, nextValue, reason) => {
                 setSchoolQuery(nextValue);
                 if (reason === "input") {
@@ -1096,14 +1233,29 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
               }}
               onChange={handleSchoolChange}
               renderOption={(props, option) => (
-                <Box component="li" {...props} key={option.publicId} sx={{ alignItems: "flex-start !important" }}>
+                <Box
+                  component="li"
+                  {...props}
+                  key={option.publicId}
+                  sx={{ alignItems: "flex-start !important" }}
+                >
                   <Stack spacing={0.5}>
                     <Typography variant="body2" fontWeight={700}>
                       {option.displayName}
                     </Typography>
                     <Stack direction="row" spacing={0.5} flexWrap="wrap">
-                      {option.institutionType ? <Chip size="small" label={typeLabel(option.institutionType, locale)} /> : null}
-                      {option.prefectureCode ? <Chip size="small" label={prefLabel(option.prefectureCode)} /> : null}
+                      {option.institutionType ? (
+                        <Chip
+                          size="small"
+                          label={typeLabel(option.institutionType, locale)}
+                        />
+                      ) : null}
+                      {option.prefectureCode ? (
+                        <Chip
+                          size="small"
+                          label={prefLabel(option.prefectureCode)}
+                        />
+                      ) : null}
                     </Stack>
                   </Stack>
                 </Box>
@@ -1119,7 +1271,10 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
               )}
             />
 
-            <FormControl fullWidth disabled={!school || facultyLoading || faculties.length === 0}>
+            <FormControl
+              fullWidth
+              disabled={!school || facultyLoading || faculties.length === 0}
+            >
               <InputLabel id="faculty-label" shrink>
                 {text.facultyAria}
               </InputLabel>
@@ -1133,17 +1288,25 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
                 sx={{ color: faculty ? "text.primary" : "text.secondary" }}
                 renderValue={(selected) => {
                   const value = String(selected);
-                  const item = faculties.find((candidate) => candidate.publicId === value);
-                  return item ? item.displayName : selectPlaceholder(facultyPlaceholder);
+                  const item = faculties.find(
+                    (candidate) => candidate.publicId === value,
+                  );
+                  return item
+                    ? item.displayName
+                    : selectPlaceholder(facultyPlaceholder);
                 }}
               >
                 <MenuItem value="">
-                  <Typography color="text.secondary">{facultyPlaceholder}</Typography>
+                  <Typography color="text.secondary">
+                    {facultyPlaceholder}
+                  </Typography>
                 </MenuItem>
                 {faculties.map((item) => (
                   <MenuItem key={item.publicId} value={item.publicId}>
                     <Stack>
-                      <Typography variant="body2">{item.displayName}</Typography>
+                      <Typography variant="body2">
+                        {item.displayName}
+                      </Typography>
                       {item.academicField ? (
                         <Typography variant="caption" color="text.secondary">
                           {fieldLabel(item.academicField, locale)}
@@ -1155,7 +1318,12 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
               </Select>
             </FormControl>
 
-            <FormControl fullWidth disabled={!faculty || departmentLoading || departments.length === 0}>
+            <FormControl
+              fullWidth
+              disabled={
+                !faculty || departmentLoading || departments.length === 0
+              }
+            >
               <InputLabel id="department-label" shrink>
                 {text.departmentAria}
               </InputLabel>
@@ -1169,19 +1337,32 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
                 sx={{ color: department ? "text.primary" : "text.secondary" }}
                 renderValue={(selected) => {
                   const value = String(selected);
-                  const item = departments.find((candidate) => candidate.publicId === value);
-                  return item ? item.displayName : selectPlaceholder(departmentPlaceholder);
+                  const item = departments.find(
+                    (candidate) => candidate.publicId === value,
+                  );
+                  return item
+                    ? item.displayName
+                    : selectPlaceholder(departmentPlaceholder);
                 }}
               >
                 <MenuItem value="">
-                  <Typography color="text.secondary">{departmentPlaceholder}</Typography>
+                  <Typography color="text.secondary">
+                    {departmentPlaceholder}
+                  </Typography>
                 </MenuItem>
                 {departments.map((item) => {
-                  const meta = [fieldLabel(item.academicField, locale), trackLabel(item.academicTrack, locale)].filter(Boolean).join(" / ");
+                  const meta = [
+                    fieldLabel(item.academicField, locale),
+                    trackLabel(item.academicTrack, locale),
+                  ]
+                    .filter(Boolean)
+                    .join(" / ");
                   return (
                     <MenuItem key={item.publicId} value={item.publicId}>
                       <Stack>
-                        <Typography variant="body2">{item.displayName}</Typography>
+                        <Typography variant="body2">
+                          {item.displayName}
+                        </Typography>
                         {meta ? (
                           <Typography variant="caption" color="text.secondary">
                             {meta}
@@ -1195,7 +1376,14 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
             </FormControl>
 
             {flowError ? <Alert severity="error">{flowError}</Alert> : null}
-            {school ? <SelectionSummary school={school} faculty={faculty} department={department} locale={locale} /> : null}
+            {school ? (
+              <SelectionSummary
+                school={school}
+                faculty={faculty}
+                department={department}
+                locale={locale}
+              />
+            ) : null}
           </Stack>
         </Paper>
       </Stack>
@@ -1207,7 +1395,7 @@ function SelectionSummary({
   school,
   faculty,
   department,
-  locale
+  locale,
 }: {
   school: Institution;
   faculty: Faculty | null;
@@ -1216,7 +1404,12 @@ function SelectionSummary({
 }) {
   const text = UI_TEXT[locale];
   const departmentMeta = department
-    ? [fieldLabel(department.academicField, locale), trackLabel(department.academicTrack, locale)].filter(Boolean).join(" / ")
+    ? [
+        fieldLabel(department.academicField, locale),
+        trackLabel(department.academicTrack, locale),
+      ]
+        .filter(Boolean)
+        .join(" / ")
     : "";
 
   return (
@@ -1228,21 +1421,50 @@ function SelectionSummary({
         <SummaryRow
           label={text.summarySchool}
           value={school.displayName}
-          chips={[typeLabel(school.institutionType, locale), prefLabel(school.prefectureCode)].filter(Boolean)}
+          chips={[
+            typeLabel(school.institutionType, locale),
+            prefLabel(school.prefectureCode),
+          ].filter(Boolean)}
         />
         {faculty ? (
-          <SummaryRow label={text.summaryFaculty} value={faculty.displayName} chips={[fieldLabel(faculty.academicField, locale)].filter(Boolean)} />
+          <SummaryRow
+            label={text.summaryFaculty}
+            value={faculty.displayName}
+            chips={[fieldLabel(faculty.academicField, locale)].filter(Boolean)}
+          />
         ) : null}
-        {department ? <SummaryRow label={text.summaryDepartment} value={department.displayName} chips={departmentMeta ? [departmentMeta] : []} /> : null}
+        {department ? (
+          <SummaryRow
+            label={text.summaryDepartment}
+            value={department.displayName}
+            chips={departmentMeta ? [departmentMeta] : []}
+          />
+        ) : null}
       </Stack>
     </Paper>
   );
 }
 
-function SummaryRow({ label, value, chips }: { label: string; value: string; chips: string[] }) {
+function SummaryRow({
+  label,
+  value,
+  chips,
+}: {
+  label: string;
+  value: string;
+  chips: string[];
+}) {
   return (
-    <Stack direction={{ xs: "column", sm: "row" }} spacing={1} alignItems={{ xs: "flex-start", sm: "center" }}>
-      <Typography variant="body2" color="text.secondary" sx={{ width: { sm: 72 }, flexShrink: 0 }}>
+    <Stack
+      direction={{ xs: "column", sm: "row" }}
+      spacing={1}
+      alignItems={{ xs: "flex-start", sm: "center" }}
+    >
+      <Typography
+        variant="body2"
+        color="text.secondary"
+        sx={{ width: { sm: 72 }, flexShrink: 0 }}
+      >
         {label}
       </Typography>
       <Typography variant="body2" fontWeight={700}>
@@ -1280,10 +1502,16 @@ async function copyTextToClipboard(text: string) {
 
 function DocPage({ page, locale }: { page: DocPageKey; locale: Locale }) {
   const doc = DOC_PAGES[locale][page];
-  const html = React.useMemo(() => marked.parse(doc.markdown, { async: false, gfm: true }) as string, [doc.markdown]);
+  const html = React.useMemo(
+    () => marked.parse(doc.markdown, { async: false, gfm: true }) as string,
+    [doc.markdown],
+  );
   const contentRef = React.useRef<HTMLDivElement | null>(null);
   const [codeBlocks, setCodeBlocks] = React.useState<CodeBlockTarget[]>([]);
-  const [codeBlockFeedback, setCodeBlockFeedback] = React.useState<{ id: string; status: "copied" | "failed" } | null>(null);
+  const [codeBlockFeedback, setCodeBlockFeedback] = React.useState<{
+    id: string;
+    status: "copied" | "failed";
+  } | null>(null);
 
   React.useEffect(() => {
     const container = contentRef.current;
@@ -1292,25 +1520,35 @@ function DocPage({ page, locale }: { page: DocPageKey; locale: Locale }) {
       return;
     }
 
-    const blocks = Array.from(container.querySelectorAll<HTMLPreElement>("pre")).map((element, index) => ({
+    const blocks = Array.from(
+      container.querySelectorAll<HTMLPreElement>("pre"),
+    ).map((element, index) => ({
       id: `${page}-${locale}-${index}`,
-      element
+      element,
     }));
     setCodeBlocks(blocks);
     setCodeBlockFeedback(null);
   }, [html, locale, page]);
 
-  const handleCopyCodeBlock = React.useCallback(async (block: CodeBlockTarget) => {
-    const code = block.element.querySelector("code")?.textContent ?? "";
-    if (!code) return;
+  const handleCopyCodeBlock = React.useCallback(
+    async (block: CodeBlockTarget) => {
+      const code = block.element.querySelector("code")?.textContent ?? "";
+      if (!code) return;
 
-    const copied = await copyTextToClipboard(code);
-    setCodeBlockFeedback({ id: block.id, status: copied ? "copied" : "failed" });
+      const copied = await copyTextToClipboard(code);
+      setCodeBlockFeedback({
+        id: block.id,
+        status: copied ? "copied" : "failed",
+      });
 
-    window.setTimeout(() => {
-      setCodeBlockFeedback((current) => (current?.id === block.id ? null : current));
-    }, 1600);
-  }, []);
+      window.setTimeout(() => {
+        setCodeBlockFeedback((current) =>
+          current?.id === block.id ? null : current,
+        );
+      }, 1600);
+    },
+    [],
+  );
 
   return (
     <Container maxWidth="md" sx={{ py: { xs: 3, md: 5 } }}>
@@ -1337,7 +1575,11 @@ function DocPage({ page, locale }: { page: DocPageKey; locale: Locale }) {
             "& p, & ul, & ol, & blockquote, & pre": { mb: 2 },
             "& ul, & ol": { pl: 3 },
             "& li": { mb: 0.7, color: "text.secondary" },
-            "& a": { color: "primary.main", fontWeight: 700, overflowWrap: "anywhere" },
+            "& a": {
+              color: "primary.main",
+              fontWeight: 700,
+              overflowWrap: "anywhere",
+            },
             "& code": {
               px: 0.6,
               py: 0.15,
@@ -1345,7 +1587,7 @@ function DocPage({ page, locale }: { page: DocPageKey; locale: Locale }) {
               border: 1,
               borderColor: "divider",
               bgcolor: "action.hover",
-              overflowWrap: "anywhere"
+              overflowWrap: "anywhere",
             },
             "& pre": {
               position: "relative",
@@ -1355,7 +1597,7 @@ function DocPage({ page, locale }: { page: DocPageKey; locale: Locale }) {
               borderRadius: 1,
               bgcolor: "grey.950",
               color: "common.white",
-              whiteSpace: "pre-wrap"
+              whiteSpace: "pre-wrap",
             },
             "& pre code": {
               display: "block",
@@ -1364,25 +1606,34 @@ function DocPage({ page, locale }: { page: DocPageKey; locale: Locale }) {
               bgcolor: "transparent",
               color: "inherit",
               whiteSpace: "pre-wrap",
-              wordBreak: "break-word"
+              wordBreak: "break-word",
             },
             "& blockquote": {
               m: 0,
               p: 1.5,
               borderLeft: 4,
               borderColor: "primary.main",
-              bgcolor: "action.hover"
+              bgcolor: "action.hover",
             },
-            "& blockquote p": { m: 0 }
+            "& blockquote p": { m: 0 },
           }}
         >
-          <Box component="article" aria-labelledby={PAGE_TITLE_ID} ref={contentRef} dangerouslySetInnerHTML={{ __html: html }} />
+          <Box
+            component="article"
+            aria-labelledby={PAGE_TITLE_ID}
+            ref={contentRef}
+            dangerouslySetInnerHTML={{ __html: html }}
+          />
           {codeBlocks.map((block) => (
             <CodeCopyButton
               key={block.id}
               block={block}
               locale={locale}
-              feedbackStatus={codeBlockFeedback?.id === block.id ? codeBlockFeedback.status : null}
+              feedbackStatus={
+                codeBlockFeedback?.id === block.id
+                  ? codeBlockFeedback.status
+                  : null
+              }
               onCopy={handleCopyCodeBlock}
             />
           ))}
@@ -1396,7 +1647,7 @@ function CodeCopyButton({
   block,
   feedbackStatus,
   locale,
-  onCopy
+  onCopy,
 }: {
   block: CodeBlockTarget;
   feedbackStatus: "copied" | "failed" | null;
@@ -1406,7 +1657,11 @@ function CodeCopyButton({
   const text = UI_TEXT[locale];
   const isCopied = feedbackStatus === "copied";
   const isFailed = feedbackStatus === "failed";
-  const label = isCopied ? text.copiedCode : isFailed ? text.copyFailed : text.copyCode;
+  const label = isCopied
+    ? text.copiedCode
+    : isFailed
+      ? text.copyFailed
+      : text.copyCode;
 
   return createPortal(
     <>
@@ -1427,26 +1682,42 @@ function CodeCopyButton({
             zIndex: 1,
             color: isFailed ? "secondary.main" : "common.white",
             border: "1px solid",
-            borderColor: isFailed ? "secondary.main" : "rgba(255, 255, 255, 0.24)",
-            bgcolor: isCopied ? "rgba(100, 199, 189, 0.22)" : "rgba(255, 255, 255, 0.12)",
+            borderColor: isFailed
+              ? "secondary.main"
+              : "rgba(255, 255, 255, 0.24)",
+            bgcolor: isCopied
+              ? "rgba(100, 199, 189, 0.22)"
+              : "rgba(255, 255, 255, 0.12)",
             backdropFilter: "blur(8px)",
             "&:hover": {
-              bgcolor: isCopied ? "rgba(100, 199, 189, 0.32)" : "rgba(255, 255, 255, 0.22)"
-            }
+              bgcolor: isCopied
+                ? "rgba(100, 199, 189, 0.32)"
+                : "rgba(255, 255, 255, 0.22)",
+            },
           }}
         >
-          {isCopied ? <CheckRoundedIcon fontSize="small" /> : <ContentCopyRoundedIcon fontSize="small" />}
+          {isCopied ? (
+            <CheckRoundedIcon fontSize="small" />
+          ) : (
+            <ContentCopyRoundedIcon fontSize="small" />
+          )}
         </IconButton>
       </Tooltip>
       <Box component="span" sx={visuallyHiddenSx} aria-live="polite">
         {feedbackStatus ? label : ""}
       </Box>
     </>,
-    block.element
+    block.element,
   );
 }
 
-function NotFoundPage({ locale, navigate }: { locale: Locale; navigate: (href: string) => void }) {
+function NotFoundPage({
+  locale,
+  navigate,
+}: {
+  locale: Locale;
+  navigate: (href: string) => void;
+}) {
   const text = UI_TEXT[locale];
   return (
     <Container maxWidth="md" sx={{ py: { xs: 4, md: 7 } }}>
@@ -1456,10 +1727,15 @@ function NotFoundPage({ locale, navigate }: { locale: Locale; navigate: (href: s
             {text.notFoundTitle}
           </Typography>
           <Typography color="text.secondary">{text.notFoundBody}</Typography>
-          <Button component="a" href="/" startIcon={<SearchRoundedIcon />} onClick={(event) => {
-            event.preventDefault();
-            navigate("/");
-          }}>
+          <Button
+            component="a"
+            href="/"
+            startIcon={<SearchRoundedIcon />}
+            onClick={(event) => {
+              event.preventDefault();
+              navigate("/");
+            }}
+          >
             {text.backHome}
           </Button>
         </Stack>

@@ -44,10 +44,22 @@ async function waitForServer(url, child) {
 export async function withStaticPreview(callback) {
   const port = await findFreePort();
   const viteBin = path.join(repoRoot, "node_modules", "vite", "bin", "vite.js");
-  const child = spawn(process.execPath, [viteBin, "preview", "--host", "127.0.0.1", "--port", String(port), "--strictPort"], {
-    cwd: repoRoot,
-    stdio: ["ignore", "pipe", "pipe"]
-  });
+  const child = spawn(
+    process.execPath,
+    [
+      viteBin,
+      "preview",
+      "--host",
+      "127.0.0.1",
+      "--port",
+      String(port),
+      "--strictPort",
+    ],
+    {
+      cwd: repoRoot,
+      stdio: ["ignore", "pipe", "pipe"],
+    },
+  );
 
   let output = "";
   child.stdout.on("data", (chunk) => {

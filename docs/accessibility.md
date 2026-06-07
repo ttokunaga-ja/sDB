@@ -36,14 +36,14 @@ npm run lighthouse:a11y
 
 ## Current Findings And Fixes
 
-| Priority | Area | Finding | Impact | Fix |
-| --- | --- | --- | --- | --- |
-| High | SPA navigation | Route changes did not move focus to the new page content. | Keyboard and screen-reader users could remain on stale navigation controls after navigation. | Added a skip link, `main` landmark focus target, and route-change focus management. |
-| High | Rendering / no-JS HTML | Vite output shipped an empty `#root`, so important page text was not present before JavaScript. | SEO and non-JavaScript accessibility were weak for documentation routes. | Added build-time static prerendered HTML for the home and documentation routes. |
-| High | Forms | Several MUI `Select` controls only used `aria-label`. | Labels were less discoverable and not visibly associated with the controls. | Added `InputLabel`, `labelId`, and `label` wiring for select controls. |
-| Medium | API-key errors | API-key warning/error text was visually close to the field but not explicitly associated. | Assistive technology users could miss why the input was invalid. | Added stable IDs and `aria-describedby` / `aria-invalid` wiring. |
-| Medium | Code copy feedback | Copy success/failure changed button text and icon, but had no live announcement. | Screen-reader users might not hear the result. | Added an `aria-live` status span next to each copy button. |
-| Medium | Drawer navigation | Drawer content used a presentational wrapper. | Navigation semantics were weaker than necessary. | Changed the drawer body to a labeled `nav`. |
+| Priority | Area                   | Finding                                                                                         | Impact                                                                                       | Fix                                                                                 |
+| -------- | ---------------------- | ----------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| High     | SPA navigation         | Route changes did not move focus to the new page content.                                       | Keyboard and screen-reader users could remain on stale navigation controls after navigation. | Added a skip link, `main` landmark focus target, and route-change focus management. |
+| High     | Rendering / no-JS HTML | Vite output shipped an empty `#root`, so important page text was not present before JavaScript. | SEO and non-JavaScript accessibility were weak for documentation routes.                     | Added build-time static prerendered HTML for the home and documentation routes.     |
+| High     | Forms                  | Several MUI `Select` controls only used `aria-label`.                                           | Labels were less discoverable and not visibly associated with the controls.                  | Added `InputLabel`, `labelId`, and `label` wiring for select controls.              |
+| Medium   | API-key errors         | API-key warning/error text was visually close to the field but not explicitly associated.       | Assistive technology users could miss why the input was invalid.                             | Added stable IDs and `aria-describedby` / `aria-invalid` wiring.                    |
+| Medium   | Code copy feedback     | Copy success/failure changed button text and icon, but had no live announcement.                | Screen-reader users might not hear the result.                                               | Added an `aria-live` status span next to each copy button.                          |
+| Medium   | Drawer navigation      | Drawer content used a presentational wrapper.                                                   | Navigation semantics were weaker than necessary.                                             | Changed the drawer body to a labeled `nav`.                                         |
 
 ## Known Limits
 

@@ -6,7 +6,7 @@ import tseslint from "typescript-eslint";
 
 export default tseslint.config(
   {
-    ignores: ["dist", "node_modules", "coverage"]
+    ignores: ["dist", "node_modules", "coverage"],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
@@ -18,28 +18,28 @@ export default tseslint.config(
       globals: globals.browser,
       parserOptions: {
         ecmaFeatures: {
-          jsx: true
-        }
-      }
+          jsx: true,
+        },
+      },
     },
     plugins: {
       "jsx-a11y": jsxA11y,
-      "react-hooks": reactHooks
+      "react-hooks": reactHooks,
     },
     settings: {
       "jsx-a11y": {
         components: {
           Button: "button",
           IconButton: "button",
-          Link: "a"
-        }
-      }
+          Link: "a",
+        },
+      },
     },
     rules: {
       ...jsxA11y.configs.recommended.rules,
       "react-hooks/rules-of-hooks": "error",
-      "react-hooks/exhaustive-deps": "error"
-    }
+      "react-hooks/exhaustive-deps": "error",
+    },
   },
   {
     files: ["*.config.{js,ts}", "scripts/**/*.mjs"],
@@ -49,11 +49,11 @@ export default tseslint.config(
       globals: {
         ...globals.node,
         ...globals.browser,
-        fetch: "readonly"
-      }
+        fetch: "readonly",
+      },
     },
     rules: {
-      "no-console": "off"
-    }
-  }
+      "no-console": "off",
+    },
+  },
 );

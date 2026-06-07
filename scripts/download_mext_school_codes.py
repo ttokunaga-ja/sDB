@@ -13,7 +13,7 @@ from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from html.parser import HTMLParser
 from pathlib import Path
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 from urllib.request import Request, urlopen
 
 
@@ -58,7 +58,15 @@ class LinkParser(HTMLParser):
         self._text_parts = []
 
 
+def validate_https_url(url: str) -> str:
+    parsed = urlparse(url)
+    if parsed.scheme != "https":
+        raise ValueError(f"Only https URLs are supported: {url}")
+    return url
+
+
 def fetch(url: str) -> bytes:
+    url = validate_https_url(url)
     curl = shutil.which("curl")
     if curl:
         return subprocess.check_output(
@@ -76,7 +84,7 @@ def fetch(url: str) -> bytes:
             ]
         )
     request = Request(url, headers={"User-Agent": USER_AGENT})
-    with urlopen(request, timeout=60) as response:
+    with urlopen(request, timeout=60) as response:  # nosemgrep: python.lang.security.audit.dynamic-urllib-use-detected.dynamic-urllib-use-detected
         return response.read()
 
 

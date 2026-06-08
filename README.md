@@ -33,6 +33,16 @@ If a user does not have an API key, the search page links to the portfolio Conta
 
 - [https://takumi-tokunaga.com/contact/](https://takumi-tokunaga.com/contact/)
 
+When Firebase/AuthAPI variables are present, the search page also shows a Google sign-in button that issues and fills an API key in the current page state. For local development, set these values in `.env.local`:
+
+- `VITE_AUTHAPI_URL`
+- `VITE_FIREBASE_API_KEY`
+- `VITE_FIREBASE_AUTH_DOMAIN`
+- `VITE_FIREBASE_PROJECT_ID`
+- `VITE_FIREBASE_APP_ID`
+- `VITE_FIREBASE_STORAGE_BUCKET` (optional)
+- `VITE_FIREBASE_MESSAGING_SENDER_ID` (optional)
+
 ## Cloudflare Pages
 
 The production site is deployed to Cloudflare Pages by GitHub Actions with Wrangler Direct Upload, following the same deployment model as the portfolio repository.
@@ -48,6 +58,18 @@ The GitHub Actions workflow requires these repository secrets:
 
 - `CLOUDFLARE_ACCOUNT_ID`
 - `CLOUDFLARE_API_TOKEN`
+
+Because this repository deploys with Wrangler Direct Upload, Vite environment variables must be available when GitHub Actions runs `npm run build`. Add the Firebase/AuthAPI values as GitHub repository variables with the same names:
+
+- `VITE_AUTHAPI_URL`
+- `VITE_FIREBASE_API_KEY`
+- `VITE_FIREBASE_AUTH_DOMAIN`
+- `VITE_FIREBASE_PROJECT_ID`
+- `VITE_FIREBASE_APP_ID`
+- `VITE_FIREBASE_STORAGE_BUCKET` (optional)
+- `VITE_FIREBASE_MESSAGING_SENDER_ID` (optional)
+
+Setting only Cloudflare Pages environment variables is not enough for this direct-upload workflow, because Cloudflare receives the already-built `dist` directory.
 
 The build bundles Markdown from `content/ja/` into the React documentation routes. Cloudflare Pages should publish only the `dist` directory, not the repository root.
 

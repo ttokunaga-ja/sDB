@@ -29,8 +29,8 @@ function isPopupFailure(error: unknown): boolean {
 
 async function runSignIn(client: AuthClient): Promise<void> {
   try {
-    if (client.currentUser()) await client.reauthenticate();
-    else await client.signIn();
+    if (client.currentUser()) await client.signOut();
+    await client.signIn();
   } catch (error) {
     if (isPopupFailure(error))
       throw new Error(

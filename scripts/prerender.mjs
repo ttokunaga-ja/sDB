@@ -90,7 +90,7 @@ function home() {
 <section class="sdb-prerender__panel" aria-label="教育機関検索フォーム">
 <div class="sdb-prerender__fields">
 <label>APIキー<input name="sdb-api-access-key" autocomplete="off" inputmode="text" placeholder="発行済み API キー" /></label>
-<p>APIキーが未入力です。<a href="https://takumi-tokunaga.com/contact/">ポートフォリオのContactページ</a>から取得導線へ進んでください。</p>
+<p>APIキーが未入力です。<a href="https://takumi-tokunaga.com/contact/">ポートフォリオのContactページ</a>から取得してください。</p>
 <label>学校種別<select name="institutionType"><option>すべての学校種別</option></select></label>
 <label>都道府県（任意）<input name="prefecture" placeholder="例: とうきょう / 大阪 / osaka" /></label>
 <label>学校名<input name="school" placeholder="りつめいかん / ritsumeikan / 立命館" /></label>

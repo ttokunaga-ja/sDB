@@ -1099,7 +1099,7 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
               id="sdb-api-key"
               label={apiKeyLabel}
               value={apiKey}
-              type="text"
+              type="password"
               name="sdb-api-access-key"
               autoComplete="off"
               inputProps={{
@@ -1117,11 +1117,6 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
               }
               placeholder={text.apiKeyPlaceholder}
               fullWidth
-              sx={{
-                "& input": {
-                  "-webkit-text-security": hasApiKey ? "disc" : "none",
-                },
-              }}
             />
 
             {!hasApiKey ? (

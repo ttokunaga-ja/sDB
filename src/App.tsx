@@ -1157,8 +1157,8 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
                 severity="warning"
                 icon={<KeyRoundedIcon />}
               >
-                <Stack spacing={1.5}>
-                  <Box>
+                <Stack spacing={1.5} alignItems="center">
+                  <Box sx={{ textAlign: "center" }}>
                     {text.apiKeyMissing}{" "}
                     <Link
                       href={API_KEY_REQUEST_URL}
@@ -1175,7 +1175,7 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
                   {isAuthConfigured() && (
                     <>
                       {authError && (
-                        <Alert severity="error" sx={{ py: 0.5 }}>
+                        <Alert severity="error" sx={{ py: 0.5, width: "100%" }}>
                           {authError}
                         </Alert>
                       )}
@@ -1188,7 +1188,7 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
                         onFocus={prepareAuthPopup}
                         onMouseEnter={prepareAuthPopup}
                         onPointerDown={prepareAuthPopup}
-                        sx={{ alignSelf: "flex-start" }}
+                        sx={{ alignSelf: "center" }}
                       >
                         {text.apiKeyAuth}
                       </Button>

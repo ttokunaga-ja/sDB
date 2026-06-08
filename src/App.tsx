@@ -1151,7 +1151,12 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
             />
 
             {!hasApiKey ? (
-              <Alert id="api-key-missing" severity="warning" icon={false}>
+              <Alert
+                id="api-key-missing"
+                severity="warning"
+                icon={false}
+                sx={{ "& .MuiAlert-message": { width: "100%" } }}
+              >
                 <Stack spacing={1.5} alignItems="center">
                   <Box sx={{ textAlign: "center" }}>
                     {text.apiKeyMissing}{" "}

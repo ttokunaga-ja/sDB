@@ -1,6 +1,7 @@
 import ArticleRoundedIcon from "@mui/icons-material/ArticleRounded";
 import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
 import ContentCopyRoundedIcon from "@mui/icons-material/ContentCopyRounded";
+import GoogleIcon from "@mui/icons-material/Google";
 import InfoRoundedIcon from "@mui/icons-material/InfoRounded";
 import KeyRoundedIcon from "@mui/icons-material/KeyRounded";
 import LanguageRoundedIcon from "@mui/icons-material/LanguageRounded";
@@ -41,6 +42,11 @@ import {
 import DOMPurify from "dompurify";
 import { marked } from "marked";
 import React from "react";
+import {
+  isAuthConfigured,
+  issueApiKeyViaPopup,
+  prepareAuthPopup,
+} from "./lib/auth";
 import { createPortal } from "react-dom";
 import apiMarkdownEn from "../content/en/api.md?raw";
 import noticesMarkdownEn from "../content/en/notices.md?raw";
@@ -286,7 +292,9 @@ const UI_TEXT = {
     apiKeyPlaceholder: "発行済み API キー",
     apiKeyMissing: "APIキーが未入力です。",
     apiKeyContact: "ポートフォリオのContactページ",
-    apiKeySuffix: "から取得導線へ進んでください。",
+    apiKeySuffix: "から取得してください。",
+    apiKeyAuth: "Googleで認証",
+    apiKeyAuthUnavailable: "この環境ではAPIキー取得を開始できません。",
     apiKeyInvalid:
       "APIキーの形式が正しくありません。tkp_ から始まる 68 文字のキーを入力してください。",
     allInstitutionTypes: "すべての学校種別",
@@ -337,7 +345,10 @@ const UI_TEXT = {
     apiKeyPlaceholder: "Issued API key",
     apiKeyMissing: "API key is not entered.",
     apiKeyContact: "Portfolio Contact page",
-    apiKeySuffix: "to continue to the acquisition flow.",
+    apiKeySuffix: "to get your key.",
+    apiKeyAuth: "Sign in with Google",
+    apiKeyAuthUnavailable:
+      "API key acquisition is not available in this environment.",
     apiKeyInvalid: "Enter a 68-character API key beginning with tkp_.",
     allInstitutionTypes: "All institution types",
     institutionTypeAria: "Institution type",
@@ -841,6 +852,8 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
   const [department, setDepartment] = React.useState<Department | null>(null);
   const [departmentLoading, setDepartmentLoading] = React.useState(false);
   const [flowError, setFlowError] = React.useState("");
+  const [authBusy, setAuthBusy] = React.useState(false);
+  const [authError, setAuthError] = React.useState<string | null>(null);
   const normalizedApiKey = React.useMemo(
     () => normalizeApiKey(apiKey),
     [apiKey],
@@ -888,6 +901,25 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
   ) : (
     text.apiKeyLabel
   );
+
+  const handleIssue = async () => {
+    setAuthBusy(true);
+    setAuthError(null);
+    try {
+      const issued = await issueApiKeyViaPopup();
+      if (!issued) {
+        setAuthError(text.apiKeyAuthUnavailable);
+        return;
+      }
+      setApiKey(issued);
+    } catch (error) {
+      setAuthError(
+        error instanceof Error ? error.message : text.apiKeyAuthUnavailable,
+      );
+    } finally {
+      setAuthBusy(false);
+    }
+  };
 
   React.useEffect(() => {
     const query = schoolQuery.trim();
@@ -1124,18 +1156,45 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
                 id="api-key-missing"
                 severity="warning"
                 icon={<KeyRoundedIcon />}
-                sx={{ alignItems: "center" }}
               >
-                {text.apiKeyMissing}{" "}
-                <Link
-                  href={API_KEY_REQUEST_URL}
-                  target="_blank"
-                  rel="noreferrer"
-                  fontWeight={700}
-                >
-                  {text.apiKeyContact}
-                </Link>
-                {locale === "ja" ? text.apiKeySuffix : ` ${text.apiKeySuffix}`}
+                <Stack spacing={1.5}>
+                  <Box>
+                    {text.apiKeyMissing}{" "}
+                    <Link
+                      href={API_KEY_REQUEST_URL}
+                      target="_blank"
+                      rel="noreferrer"
+                      fontWeight={700}
+                    >
+                      {text.apiKeyContact}
+                    </Link>
+                    {locale === "ja"
+                      ? text.apiKeySuffix
+                      : ` ${text.apiKeySuffix}`}
+                  </Box>
+                  {isAuthConfigured() && (
+                    <>
+                      {authError && (
+                        <Alert severity="error" sx={{ py: 0.5 }}>
+                          {authError}
+                        </Alert>
+                      )}
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        startIcon={<GoogleIcon />}
+                        disabled={authBusy}
+                        onClick={handleIssue}
+                        onFocus={prepareAuthPopup}
+                        onMouseEnter={prepareAuthPopup}
+                        onPointerDown={prepareAuthPopup}
+                        sx={{ alignSelf: "flex-start" }}
+                      >
+                        {text.apiKeyAuth}
+                      </Button>
+                    </>
+                  )}
+                </Stack>
               </Alert>
             ) : !apiKeyValid ? (
               <Alert id="api-key-error" severity="error">

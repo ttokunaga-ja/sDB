@@ -25,7 +25,7 @@ For JSON `POST` requests, also send:
 Content-Type: application/json
 ```
 
-API keys are 68-character strings beginning with `tkp_`. If you do not have an API key, use the portfolio Contact page for the acquisition flow:
+API keys are 68-character strings beginning with `tkp_`. If you do not have an API key, get your key from the portfolio Contact page:
 
 - [https://takumi-tokunaga.com/contact/](https://takumi-tokunaga.com/contact/)
 

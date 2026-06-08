@@ -3,7 +3,6 @@ import CheckRoundedIcon from "@mui/icons-material/CheckRounded";
 import ContentCopyRoundedIcon from "@mui/icons-material/ContentCopyRounded";
 import GoogleIcon from "@mui/icons-material/Google";
 import InfoRoundedIcon from "@mui/icons-material/InfoRounded";
-import KeyRoundedIcon from "@mui/icons-material/KeyRounded";
 import LanguageRoundedIcon from "@mui/icons-material/LanguageRounded";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import PolicyRoundedIcon from "@mui/icons-material/PolicyRounded";
@@ -1152,11 +1151,7 @@ function HomePage({ apiBase, locale }: { apiBase: string; locale: Locale }) {
             />
 
             {!hasApiKey ? (
-              <Alert
-                id="api-key-missing"
-                severity="warning"
-                icon={<KeyRoundedIcon />}
-              >
+              <Alert id="api-key-missing" severity="warning" icon={false}>
                 <Stack spacing={1.5} alignItems="center">
                   <Box sx={{ textAlign: "center" }}>
                     {text.apiKeyMissing}{" "}
